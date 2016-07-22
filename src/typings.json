@@ -1,0 +1,26 @@
+{
+  "globalDependencies": {
+    "Q": "github:DefinitelyTyped/DefinitelyTyped/q/Q.d.ts#381479952e9725f6e14e7974f082b5e11585bf0b",
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts#a6ff9f6e195a334afd89e4b721d05e9520eee4c0",
+    "angular-material": "github:DefinitelyTyped/DefinitelyTyped/angular-material/angular-material.d.ts#a6ff9f6e195a334afd89e4b721d05e9520eee4c0",
+    "angular-resource": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular-resource.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "body-parser": "github:DefinitelyTyped/DefinitelyTyped/body-parser/body-parser.d.ts#ebc69904eb78f94030d5d517b42db20867f679c0",
+    "d3": "github:DefinitelyTyped/DefinitelyTyped/d3/d3.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
+    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "express-session": "github:DefinitelyTyped/DefinitelyTyped/express-session/express-session.d.ts#d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#a6ff9f6e195a334afd89e4b721d05e9520eee4c0",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#6f6e5c7dd9effe21fee14eb65fe340ecbbc8580a",
+    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "moment": "github:DefinitelyTyped/DefinitelyTyped/moment/moment.d.ts#381479952e9725f6e14e7974f082b5e11585bf0b",
+    "moment-node": "github:DefinitelyTyped/DefinitelyTyped/moment/moment-node.d.ts#381479952e9725f6e14e7974f082b5e11585bf0b",
+    "morgan": "github:DefinitelyTyped/DefinitelyTyped/morgan/morgan.d.ts#98a9440752f3f2ad7786aba1bf9bdefec818919e",
+    "multer": "github:DefinitelyTyped/DefinitelyTyped/multer/multer.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "passport": "github:DefinitelyTyped/DefinitelyTyped/passport/passport.d.ts#05557455c49043ff0189182e27c9e04403a70802",
+    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "validator": "github:DefinitelyTyped/DefinitelyTyped/validator/validator.d.ts#30387ec3dd6eb426cc48522fd3aef09ada83aa48"
+  },
+  "dependencies": {
+    "mongoose": "registry:npm/mongoose#4.3.5+20160628072220"
+  }
+}

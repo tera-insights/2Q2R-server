@@ -1,0 +1,53 @@
+{
+  "name": "2q2r-demo",
+  "version": "1.0.0",
+  "description": "This is a demo of the 2Q2R library and set of tools.",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "./pre_start.sh",
+    "start": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alinVD/2Q2R-demo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alinVD/2Q2R-demo/issues"
+  },
+  "homepage": "https://github.com/alinVD/2Q2R-demo#readme",
+  "devDependencies": {
+    "faker": "^3.0.1",
+    "forever": "^0.15.1",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-nodemon": "^2.0.4",
+    "gulp-sourcemaps": "^1.5.2",
+    "typescript": "^1.5.3"
+  },
+  "dependencies": {
+    "angular-messages": "^1.5.7",
+    "body-parser": "^1.14.1",
+    "connect-mongo": "^1.2.1",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "gulp-shell": "^0.4.3",
+    "gulp-typescript": "^2.9.0",
+    "lodash": "^3.10.1",
+    "mongoose": "^4.5.5",
+    "morgan": "^1.6.1",
+    "multer": "^1.1.0",
+    "passport": "^0.3.2",
+    "passport-challenge": "^0.1.1",
+    "passport-local": "^1.0.0",
+    "q": "^1.4.1",
+    "serve-static": "^1.10.0",
+    "typescript-formatter": "^1.0.0",
+    "typings": "^1.3.1",
+    "u2f": "^0.1.2",
+    "unirest": "^0.5.0",
+    "validator": "^4.0.6"
+  }
+}
