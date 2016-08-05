@@ -9,6 +9,9 @@ import * as mongoose from 'mongoose';
 
 import * as registerRoutes from './routes/register';
 import * as authRoutes from './routes/auth';
+import * as s2s from './routes/s2s';
+import * as keys from './routes/keys';
+import * as users from './routes/users';
 
 
 // Local config file. 
@@ -24,15 +27,22 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 // registration routes
-app.post('/register/challenge', registerRoutes.challenge); // Protected
-app.post('/register/server',registerRoutes.server); 
+app.post('/register/challenge', s2s.ensureServer, registerRoutes.challenge); 
+app.post('/register/server',s2s.ensureServer, registerRoutes.server); 
 app.post('/register',registerRoutes.register);
 
 // authentication routes
-app.post('/auth/challenge', authRoutes.challenge); // Protected
-app.post('/auth/server', authRoutes.server); 
+app.post('/auth/challenge', s2s.ensureServer, authRoutes.challenge); 
+app.post('/auth/server', s2s.ensureServer, authRoutes.server); 
 app.post('/auth',authRoutes.authtenticate);
 
+// key routes
+app.get(/keys/, s2s.ensureServer, keys.getKeys);
+app.delete('/keys/:keyID/device', keys.deleteDevKey);
+app.delete('/keys/:keyID', s2s.ensureServer, keys.deleteKey);
+
+// user routes
+app.delete('/users/:userID', s2s.ensureServer, users.deleteUser);
 
 // Listen on desired port
 server.listen(config.port);
