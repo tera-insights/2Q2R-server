@@ -1,26 +1,24 @@
 /// <reference path="../typings/index.d.ts" />
+/// <reference path="../interfaces/u2f.d.ts" />
 
-import * as crypto from 'crypto';
-// u2f has no d.ts definition
-var u2f = require('u2f');
+import * as express from 'express';
 
-// Local config file.
-var config = require('../config.js');
+import {Keys} from '../models';
+import * as config from 'config';
 
 /**
  * This file contains all the routes that deal with authentication of devices.
  */
 
-import * as express from 'express';
 
-interface IRequest {
+interface IRequest extends u2f.IRequest {
     userID: string,
-    challenge: string,
-    appId: string,
-    keyHandle: string,
     time: Date,
-    authenticated: boolean,
-    request: express.Response
+    keyHandle: string,
+    // server reply state
+    request: express.Response,
+    status?: number,
+    message?: string,
 }
 
 // Set of pending requests
@@ -28,10 +26,10 @@ var pending: { [challenge: string]: IRequest } = {};
 
 // POST: /auth
 export function authtenticate(req: express.Request, res: express.Response) {
-    var clientData:any = {};
+    var clientData: any = {};
     try {
         clientData = JSON.parse(req.body.clientData);
-    } catch(e){
+    } catch (e) {
         res.status(404).send("Invalid request");
     }
 
@@ -41,41 +39,27 @@ export function authtenticate(req: express.Request, res: express.Response) {
         return;
     }
 
-    var u2fRes = {
-        clientData: new Buffer(req.body.clientData).toString('base64'),
-        signatureData: req.body.signatureData
-    };
-
-    // TODO: find the key info data from DB
-/*
-    var pubKey = registrations[userID][challenges[userID].keyHandle].pubKey;
-    var checkSig = u2f.checkSignature(challenges[userID], u2fRes, pubKey);
-
-    if (checkSig.successful) {
-
-        challenges[userID].onCompletion.status(200).send({ successful: true });
-
-        // open user session
-        res.status(200).send("Authentication approved!");
-
-    } else {
-
-        challenges[userID].onCompletion.status(400).send();
-
-        console.log("Authentication for \"" + userID + "\" failed.");
-        res.status(400).send("Authentication failed.");
-
-    }
-    
-*/
-    if (cReq.request) { // have a pending requests
-        cReq.request.status(200).send("Authentication successful.");
-        delete pending[clientData.challenge];
-    } else {
-        cReq.authenticated = true
-    }
-
-
+    Keys.checkSignature(cReq, <u2f.ISignatureData>req.body)
+        .then((msg: string) => {
+            if (cReq.request) {
+                cReq.request.status(200).send(msg);
+                delete pending[clientData.challenge];
+            } else {
+                cReq.status = 200;
+                cReq.message = msg;
+            }
+            res.status(200).send("Authentication successful.");
+        }, (err: Error) => {
+            if (cReq.request) {
+                cReq.request.status(400).send(err.message);
+                delete pending[clientData.challenge];
+            } else {
+                cReq.status = 400;
+                cReq.message = err.message;
+            }
+            res.status(400).send("Authentication failed.");
+            console.log("Authentication for \"" + clientData.userID + "\" failed.");
+        });
 }
 
 // POST: /auth/server
@@ -90,10 +74,10 @@ export function server(req: express.Request, res: express.Response) {
         return;
     }
 
-    if (cReq.authenticated) {
+    if (cReq.status) {
         // fullfil this rightaway and remove the pending challenge
         delete pending[challenge];
-        res.send("Succesful");
+        res.status(cReq.status).send(cReq.message);
     } else {
         // que up this request
         cReq.request = res;
@@ -104,28 +88,19 @@ export function server(req: express.Request, res: express.Response) {
 export function challenge(req: express.Request, res: express.Response) {
     var userID = req.body.userID;
     var keyID = req.body.keyID;
-    var apiKey = req.body.apiKey;
     var appID = req.body.appID;
 
-    if (apiKey != config.apiKey || appID != config.appID) {
-        res.status(401).send("Incorrect authentication");
-        return;
-    }
+    Keys.generateRequest(appID, keyID, false)
+        .then((req: IRequest) => {
+            req.userID = userID;
+            req.time = new Date();
+            pending[req.challenge] = req;
 
-    // TODO: check tha we have this user/key combination
-
-    /// create the challenge and the pending request
-    var u2fReq = <IRequest>u2f.request(config.appID, keyID);
-    u2fReq.userID = userID;
-    u2fReq.time = new Date();
-    u2fReq.authenticated = false;
-
-    pending[u2fReq.challenge] = u2fReq;
-
-    res.send(JSON.stringify({
-        infoURL: config.baseUrl + "/info",
-        challenge: u2fReq.challenge,
-        appID: appID,
-        keyID: keyID
-    }));
+            res.send(JSON.stringify({
+                infoURL: config.get('baseUrl') + "/info",
+                challenge: req.challenge,
+                appID: appID,
+                keyID: keyID
+            }));
+        });
 }

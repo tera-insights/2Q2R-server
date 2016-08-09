@@ -5,18 +5,28 @@
  */
 
 import * as express from 'express';
+import {Keys} from '../models';
 
 export function getKeys(req: express.Request, res: express.Response) {
-
-
-    // TODO: find the key 
-
+    var userID = req.params.userID;
+    Keys.get(userID).then(
+        (keys) => {
+            res.json(keys);
+        }, (err:Error) => {
+            res.send(401).send(err.message);
+        }
+    );
 }
 
 export function deleteKey(req: express.Request, res: express.Response) {
-
-
-    // TODO: find the key 
+    var keyID = req.params.keyID;
+    Keys.delete(keyID).then(
+        () => {
+            res.status(200).send("Key "+keyID+" deleted.");
+        }, (err: Error) => {
+            res.status(400).send(err.message);
+        }
+    )
 
 }
 
@@ -26,8 +36,6 @@ export function deleteKey(req: express.Request, res: express.Response) {
  * self unregister.
 */
 export function deleteDevKey(req: express.Request, res: express.Response) {
-    // Check the digital signature
-
-    // TODO: find the key 
-
+    // TODO
+    res.status(501).send("Not yet implemented.");
 }

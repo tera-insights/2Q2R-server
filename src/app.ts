@@ -37,7 +37,7 @@ app.post('/auth/server', s2s.ensureServer, authRoutes.server);
 app.post('/auth',authRoutes.authtenticate);
 
 // key routes
-app.get(/keys/, s2s.ensureServer, keys.getKeys);
+app.get('/keys/:userID', s2s.ensureServer, keys.getKeys);
 app.delete('/keys/:keyID/device', keys.deleteDevKey);
 app.delete('/keys/:keyID', s2s.ensureServer, keys.deleteKey);
 

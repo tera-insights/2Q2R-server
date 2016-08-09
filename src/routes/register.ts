@@ -1,24 +1,17 @@
 /// <reference path="../typings/index.d.ts" />
+/// <reference path="../interfaces/u2f.d.ts" />
+
+import * as express from 'express';
+
+import {Keys} from '../models';
+import * as config from 'config';
 
 /**
  * This file contains all the routes that deal with registration of devices.
  */
 
-import * as express from 'express';
-
-// u2f has no d.ts definition
-var u2f = require('u2f');
-
-// Local config file.
-var config = require('../config.js');
-
-import Key = require('../models/Keys');
-import IKey = require('../interfaces/IKeys');
-
-interface IRequest {
+interface IRequest extends u2f.IRequest {
     userID: string,
-    challenge: string,
-    apiId: string,
     time: Date,
     status?: number, // the status of delayed reply
     message?: string, // the message for delayed reply  
@@ -80,48 +73,17 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
-    var registerData = {
-        clientData: new Buffer(req.body.clientData).toString('base64'),
-        registrationData: req.body.registrationData
-    };
-    var checkRes = u2f.checkRegistration(cReq, registerData);
-
-    if (checkRes.successful) {
-        var keyID = checkRes.keyHandle;
-
-        // check that we do not already have the same userID, keyID combination
-        Key.findOne({
-            userID: data.userID,
-            keyID: keyID
-        }, (key: IKey) => {
-            if (key) {
-                replyBoth(Reply.KeyExists, res, cReq);
-            } else {
-                // new combination, save it
-                var newKey = new Key({
-                    userID: data.userID,
-                    keyID: keyID,
-                    type: data.type,
-                    pubKey: checkRes.pubKey,
-                    name: data.deviceName,
-                    counter: 0,
-                    fcmToken: data.fcmToken
-                }).save((err) => {
-                    if (err)
-                        replyBoth(Reply.SaveKeyErr, res, cReq);
-                    else {
-                        replyBoth(Reply.RegistrationOK, res, cReq);
-                    }
-                });
-            }
+    Keys.register(data.userID, req.body.name, req.body.type, req.body.fcmToken,
+        cReq, <u2f.IRegisterData>req.body).then(
+        (msg: string) => {
+            replyBoth(Reply.RegistrationOK, res, cReq);
+        }, (err: Error) => {
+            replyBoth(Reply.SaveKeyErr, res, cReq);
         });
-    } else {
-        replyBoth(Reply.DigitalSigErr, res, cReq);
-    }
 
 }
 
-// POST: /register
+// POST: /register/server
 export function server(req: express.Request, res: express.Response) {
     var challenge = req.body.challenge;
     var userID = req.body.userID;
@@ -140,32 +102,23 @@ export function server(req: express.Request, res: express.Response) {
         // que up this request
         cReq.request = res;
     }
-
 }
 
 // POST: /register/challenge
 export function challenge(req: express.Request, res: express.Response) {
     var userID = req.body.userID;
-    var apiKey = req.body.apiKey;
     var appID = req.body.appID;
 
-    if (apiKey != config.apiKey || appID != config.appID) {
-        res.status(401).send("Incorrect authentication");
-        return;
-    }
+    Keys.generateRequest(appID, null, true)
+        .then((req: IRequest) => {
+            req.userID = userID;
+            req.time = new Date();
+            pending[req.challenge] = req;
 
-    // TODO: check tha we do not have this user/key combination
-
-    /// create the challenge and the pending request
-    var u2fReq = <IRequest>u2f.request(config.appID);
-    u2fReq.userID = userID;
-    u2fReq.time = new Date();
-
-    pending[u2fReq.challenge] = u2fReq;
-
-    res.send(JSON.stringify({
-        infoURL: config.baseUrl + "/info",
-        challenge: u2fReq.challenge,
-        appID: appID
-    }));
+            res.send(JSON.stringify({
+                infoURL: config.get('baseUrl') + "/info",
+                challenge: req.challenge,
+                appID: appID
+            }));
+        });
 }

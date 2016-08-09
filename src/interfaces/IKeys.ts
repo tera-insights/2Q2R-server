@@ -1,8 +1,8 @@
 /// <reference path="../typings/index.d.ts" />
 
-import * as mongoose from 'mongoose';
+import * as Sequelize from 'sequelize';
 
-interface IKey extends mongoose.Document {
+export interface IKey {
     /**
      * The abstract user ID. This can be anything, possibly an email on 
      * a randomly generated base64 or hex string.
@@ -51,4 +51,8 @@ interface IKey extends mongoose.Document {
 
 }
 
-export = IKey;
+export interface IKeyInstance
+    extends Sequelize.Instance<IKeyInstance, IKey>, IKey {};
+
+export interface IKeyModel
+    extends Sequelize.Model<IKeyInstance, IKey> {}

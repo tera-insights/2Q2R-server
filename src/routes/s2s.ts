@@ -5,15 +5,15 @@
  * authenicated requests. 
  */
 
-// Local config file.
-var config = require('../config.js');
-
 import * as express from 'express';
+import * as config from 'config';
+
+var serverAuth = config.get("serverAuth");
+var tokens = config.get("authTokens");
 
 export function ensureServer(req: express.Request, res: express.Response, next: Function) {
-    switch (config.serverAuth) {
+    switch (serverAuth) {
         case "token":
-            var tokens = config.authTokens;
             var token = req.body.token;
             var requestor = tokens[token];
             if (requestor) { // we have a match
