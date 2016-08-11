@@ -1,5 +1,6 @@
 {
     "port": 3040,
+    "baseURL": "http:%IP:%port",
     "database": {
         "db": "2Q2R-server",
         "username": null,
@@ -12,12 +13,11 @@
     },
     // This part needs to be owerwritten in local.json
     "serverAuth": "token",
-    "authTokens": {
-        // map: token => name
-        // appID = sha256(name)
-        "fake_12345": {
-            "appID": "fake_12345678",
-            "name": "2Q2R Server Demo"
+    "apps": { // map appID => info
+        "fakeid_7428349237": {
+            "name": "2Q2R Server Demo",
+            "authType": "token",
+            "token": "fake_12345"
         }
     },
     "fbServerKey": "This_is_not_a_valid_token"

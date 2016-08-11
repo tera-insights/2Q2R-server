@@ -12,60 +12,18 @@ var tsProject = ts.createProject({
     sourceMap: true
 });
 
-gulp.task('typescript server', ['prettify'], function() {
-    var result = gulp.src('src/app/**/*.ts')
-            .pipe(sourcemaps.init())
-            .pipe(ts(tsProject));
-
-    gulp.src('src/config.js')
-        .pipe(gulp.dest('.'));
+gulp.task('typescript', [/*'prettify'*/], function () {
+    var result = gulp.src('src/**/*.ts')
+        .pipe(sourcemaps.init())
+        .pipe(ts(tsProject));
 
     return result.js
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('app/'));
 });
 
-gulp.task('typescript client', ['typescript server'], function() {
-    var result = gulp.src('src/public/**/*.ts')
-            .pipe(sourcemaps.init())
-            .pipe(ts(tsProject));
-    
-    return result.js
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('public/'));
-});
-
-gulp.task('copy assets',  function() {
-    // Also, copy over other assets
-    var result = gulp.src([
-        'src/public/**/*.css',
-        'src/public/**/*.js',
-        'src/public/**/*.html',
-        'src/public/**/*.png',
-        'src/public/**/*.jpg'
-    ]);
-
-    return result.pipe(gulp.dest('public/'));
-});
-
-gulp.task('copy config', ['typescript client'], function() {
-    var result = gulp.src('src/config.js')
-            .pipe(gulp.dest('.'));
-    
-    return result;
-});
-
-/*
-
- gulp.task('build tests', ['typescript client'], function() {
-    var result = gulp.src('public/modules/core/SocketWrappers.js')
-            .pipe(gulp.dest('test/'));
-
-    return result;
-});
-*/
 // Start up the application
-gulp.task('start' ,['build'], function() {
+gulp.task('start', ['build'], function () {
     nodemon({
         script: 'app/app.js',
         watch: [
@@ -74,12 +32,10 @@ gulp.task('start' ,['build'], function() {
     });
 });
 
-gulp.task('watch', function() {
-    gulp.watch('src/app/**/*.ts', ['typescript server']);
-    gulp.watch('src/public/**/*.ts', ['typescript client']);
-    gulp.watch(['src/public/**/*.*', '!src/public/**/*.ts'], ['copy assets']);
+gulp.task('watch', function () {
+    gulp.watch('src/**/*.ts', ['typescript']);
 });
 
-gulp.task('prettify', shell.task(['./tsformat.sh'])); 
-gulp.task('build', ['prettify', 'typescript server', 'typescript client', 'copy assets']);
+// gulp.task('prettify', shell.task(['./tsformat.sh']));
+gulp.task('build', [/*'prettify',*/ 'typescript']);
 gulp.task('default', ['build', 'start', 'watch']);

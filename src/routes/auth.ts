@@ -5,11 +5,11 @@ import * as express from 'express';
 
 import {Keys} from '../models';
 import * as config from 'config';
+import * as u2f from "u2f";
 
 /**
  * This file contains all the routes that deal with authentication of devices.
  */
-
 
 interface IRequest extends u2f.IRequest {
     userID: string,

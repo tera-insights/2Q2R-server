@@ -3,8 +3,9 @@
 
 import * as express from 'express';
 
-import {Keys} from '../models';
+import {Keys, Apps} from '../models';
 import * as config from 'config';
+import * as u2f from "u2f";
 
 /**
  * This file contains all the routes that deal with registration of devices.
@@ -61,6 +62,15 @@ function replyBoth(reply: Reply, res: express.Response, req: IRequest) {
 
 // Set of pending requests
 var pending: { [challenge: string]: IRequest } = {};
+
+// the default appID for backwards compatibility
+var defaultAppID = config.get("defaultAppID");
+
+// GET: /info
+export function info(req: express.Request, res: express.Response) {
+    var appID = req.params.appID ? req.params.appID : null; 
+    res.json(Apps.getInfo(req.params.appID));
+}
 
 // POST: /register
 export function register(req: express.Request, res: express.Response) {
