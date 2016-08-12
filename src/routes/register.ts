@@ -69,7 +69,7 @@ var defaultAppID = config.get("defaultAppID");
 // GET: /info
 export function info(req: express.Request, res: express.Response) {
     var appID = req.params.appID ? req.params.appID : null; 
-    res.json(Apps.getInfo(req.params.appID));
+    res.json(Apps.getInfo(appID));
 }
 
 // POST: /register

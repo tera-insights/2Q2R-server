@@ -17,3 +17,6 @@ export { KeysSchema } from './Keys';
 export var Keys = new KeysSchema(sequelize);
 
 export var Apps = new AppsSchema(<AppInfoMap>config.get("apps"));
+
+// This is critical. Without it, the schema is not created
+sequelize.sync();
