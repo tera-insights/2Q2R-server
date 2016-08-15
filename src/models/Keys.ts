@@ -171,6 +171,21 @@ export class KeysSchema {
     }
 
     /**
+     * Check wheter the user has any keys, i.e. it exists 
+     * 
+     * @param {string} userid
+     * @returns Promise<boolean>
+     */
+    userExists(userid: string){
+        return this.schema.count({
+            where: { userID: userid}
+        }).then( (cnt: number) => {
+            return cnt > 0;
+        });
+    }
+
+
+    /**
      * Delete user keys given the userid 
      * 
      * @param {string} userid

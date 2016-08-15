@@ -21,3 +21,15 @@ export function deleteUser(req: express.Request, res: express.Response) {
     );
 }
 
+// POST: /users/exists/:userID
+export function existsUser(req: express.Request, res: express.Response) {
+    var userID = <string>req.params.userID;
+    Keys.userExists(userID).then(
+        (exists:boolean) => {
+            res.json({exists: exists});
+        }, (error) => {
+            res.status(401).send(error.message);
+        }
+    )
+
+}
