@@ -4,7 +4,7 @@ import * as config from 'config';
 
 export interface AppInfo {
     name: string;
-    type: "token" | "DSA";
+    authType: "token" | "DSA";
     token?: string;
     pubKey?: string;
 }
@@ -62,9 +62,10 @@ export class AppsSchema {
         if (!obj.appID) return false; // missing appID
 
         var app = this.apps[obj.appID];
+
         if (!app) return false; // no matching appID
 
-        switch (app.type) {
+        switch (app.authType) {
             case "token":
                 if (!obj.token || obj.token !== app.token)
                     return false; // no or unmatched token
@@ -91,10 +92,10 @@ export class AppsSchema {
         var baseURL = <string> config.get("baseURL");
         var port = <string> config.get("port");
         var IP = findIPv4();
-        console.log("Server IP:", IP);
         this.baseURL = baseURL
             .replace('%port', port)
             .replace('%IP', IP);
+        console.log("Server BaseURL:", this.baseURL);
     }
 
 }

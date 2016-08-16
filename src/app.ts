@@ -45,7 +45,7 @@ app.post('/keys/delete/:keyID/device', keys.deleteDevKey);
 app.post('/keys/delete/:keyID', s2s.ensureServer, keys.deleteKey);
 
 // user routes
-app.post('/users/exists/:userID', s2s.ensureServer, users.existsUser);
+app.post('/users/exists', s2s.ensureServer, users.existsUser);
 app.post('/users/delete/:userID', s2s.ensureServer, users.deleteUser);
 
 // Listen on desired port

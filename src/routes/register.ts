@@ -49,8 +49,8 @@ function replyBoth(reply: Reply, res: express.Response, req: IRequest) {
 
     // now deal with the message transmission
     if (req.request) { // request pending, send to both
-        res.send(status).send(msg);
-        req.request.send(status).send(msg);
+        res.status(status).send(msg);
+        req.request.status(status).send(msg);
         // challenge completed (positively or negatively)
         delete pending[req.challenge];
     } else {
@@ -68,8 +68,10 @@ var defaultAppID = config.get("defaultAppID");
 
 // GET: /info
 export function info(req: express.Request, res: express.Response) {
-    var appID = req.params.appID ? req.params.appID : null; 
-    res.json(Apps.getInfo(appID));
+    var appID = req.params.appID ? req.params.appID : defaultAppID; 
+    var info = Apps.getInfo(appID);
+    console.log("INFO: ", appID, info); 
+    res.json(info);
 }
 
 // POST: /register
@@ -83,11 +85,12 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
-    Keys.register(data.userID, req.body.name, req.body.type, req.body.fcmToken,
+    Keys.register(cReq.userID, req.body.deviceName, req.body.type || "2q2r", req.body.fcmToken,
         cReq, <u2f.IRegisterData>req.body).then(
         (msg: string) => {
             replyBoth(Reply.RegistrationOK, res, cReq);
         }, (err: Error) => {
+            console.log("Error:", err);
             replyBoth(Reply.SaveKeyErr, res, cReq);
         });
 
@@ -104,7 +107,7 @@ export function server(req: express.Request, res: express.Response) {
         return;
     }
 
-    if (!cReq.request) {
+    if (cReq.status && cReq.message) {
         // fullfil this rightaway and remove the pending challenge
         res.status(cReq.status).send(cReq.message);
         delete pending[challenge];
@@ -125,10 +128,9 @@ export function challenge(req: express.Request, res: express.Response) {
             req.time = new Date();
             pending[req.challenge] = req;
 
-            res.send(JSON.stringify({
-                infoURL: config.get('baseUrl') + "/info",
-                challenge: req.challenge,
-                appID: appID
-            }));
+            var reply: any = Apps.getInfo(appID); 
+            reply.challenge = req.challenge;
+
+            res.json(reply);
         });
 }

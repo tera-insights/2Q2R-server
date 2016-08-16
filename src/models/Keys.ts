@@ -68,21 +68,21 @@ export class KeysSchema {
     register(userid: string, name: string, type: string, fcmToken: string,
         request: u2f.IRequest, registerData: u2f.IRegisterData) {
         // first check the registration
-        var res = u2f.checkRegistration(request, registerData);
+        var clientData = new Buffer(registerData.clientData).toString('base64');
+        var res = u2f.checkRegistration(request, {
+            clientData: clientData,
+            registrationData: registerData.registrationData
+        });
         if (res.successful) {
-            if (res.keyHandle === request.keyHandle) { // validate keyID
-                return this.schema.create({
-                    keyID: res.keyHandle,
-                    userID: userid,
-                    type: type,
-                    pubKey: res.publicKey,
-                    name: name,
-                    counter: 0,
-                    fcmToken: fcmToken
-                });
-            } else {
-                return makeErrorPromise("Key ID in the request and digital signature do not match.");
-            }
+            return this.schema.create({
+                keyID: res.keyHandle,
+                userID: userid,
+                type: type,
+                pubKey: res.publicKey,
+                name: name,
+                counter: 0,
+                fcmToken: fcmToken
+            });
         } else {
             return makeErrorPromise(res.errorMessage);
         }
@@ -130,7 +130,7 @@ export class KeysSchema {
         var fields = [];
         if (name) fields.push("name");
         if (fcmToken) fields.push("fcmToken");
-        
+
         return this.schema.update({
             keyID: id,
             name: name,
@@ -138,11 +138,11 @@ export class KeysSchema {
             userID: null,
             type: null,
             pubKey: null,
-            counter: null            
+            counter: null
         }, {
-            where: { keyID: id },
-            fields: fields
-        });
+                where: { keyID: id },
+                fields: fields
+            });
     }
 
     /**
@@ -176,10 +176,10 @@ export class KeysSchema {
      * @param {string} userid
      * @returns Promise<boolean>
      */
-    userExists(userid: string){
+    userExists(userid: string) {
         return this.schema.count({
-            where: { userID: userid}
-        }).then( (cnt: number) => {
+            where: { userID: userid }
+        }).then((cnt: number) => {
             return cnt > 0;
         });
     }

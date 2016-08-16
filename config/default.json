@@ -1,6 +1,6 @@
 {
     "port": 3040,
-    "baseURL": "http:%IP:%port",
+    "baseURL": "http://%IP:%port",
     "database": {
         "db": "2Q2R-server",
         "username": null,
