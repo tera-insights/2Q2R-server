@@ -47,7 +47,12 @@ export class KeysSchema {
                     if (!key)
                         throw "Key not found";
 
-                    return u2f.request(appID, keyID);
+                    var reply: any = u2f.request(appID, keyID);
+                    // add the token so we can send a Firebase request
+                    if (key.fcmToken)
+                        reply.fcmToken = key.fcmToken;
+
+                    return reply;
 
 /*
                     return key.updateAttributes("counter",
@@ -172,7 +177,8 @@ export class KeysSchema {
      */
     get(userid: string) {
         return this.schema.findAll({
-            where: { userID: userid }
+            where: { userID: userid },
+            attributes: ['keyID', 'type', 'name', 'counter']
         });
     }
 

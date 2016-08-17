@@ -2,6 +2,7 @@
 /// <reference path="../interfaces/u2f.d.ts" />
 
 import * as express from 'express';
+var unirest = require('unirest');
 
 import {Keys, Apps} from '../models';
 import * as config from 'config';
@@ -15,6 +16,7 @@ interface IRequest extends u2f.IRequest {
     userID: string,
     time: Date,
     keyHandle: string,
+    fcmToken?: string,
     // server reply state
     request: express.Response,
     status?: number,
@@ -23,6 +25,9 @@ interface IRequest extends u2f.IRequest {
 
 // Set of pending requests
 var pending: { [challenge: string]: IRequest } = {};
+
+// cache the Firebase Communicator key
+var fbServerKey = config.get("fbServerKey");
 
 // POST: /auth
 export function authtenticate(req: express.Request, res: express.Response) {
@@ -97,10 +102,27 @@ export function challenge(req: express.Request, res: express.Response) {
             req.userID = userID;
             req.time = new Date();
             pending[req.challenge] = req;
- 
-            var reply: any = Apps.getInfo(appID); 
+
+            var reply: any = Apps.getInfo(appID);
             reply.challenge = req.challenge;
-          
+
+            // send a Firebase request if we can
+            if (req.fcmToken)
+                unirest.post("https://fcm.googleapis.com/fcm/send")
+                    .headers({
+                        "Authorization": "key=" + fbServerKey,
+                        "Content-Type": "application/json"
+                    })
+                    .send({
+                        to: req.fcmToken,
+                        data: {
+                            authData: "A " + appID + " " + req.challenge + " " + keyID
+                        }
+                    })
+                    .end(function (response) {
+                        console.log("Firebase request: ", response.statusCode);
+                    });
+
             res.json(reply);
         });
 }
