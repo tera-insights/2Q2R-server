@@ -3,7 +3,7 @@
 
 import * as express from 'express';
 
-import {Keys} from '../models';
+import {Keys, Apps} from '../models';
 import * as config from 'config';
 import * as u2f from "u2f";
 
@@ -34,7 +34,9 @@ export function authtenticate(req: express.Request, res: express.Response) {
     }
 
     var cReq = pending[clientData.challenge];
-    if (!cReq || cReq.userID != clientData.userID || cReq.keyHandle != clientData.keyID) { // No valid challenge pending 
+
+    if (!cReq /*|| cReq.userID != clientData.userID 
+     || cReq.keyHandle != clientData.keyID*/) { // No valid challenge pending 
         res.status(401).send("Request invalid");
         return;
     }
@@ -58,7 +60,7 @@ export function authtenticate(req: express.Request, res: express.Response) {
                 cReq.message = err.message;
             }
             res.status(400).send("Authentication failed.");
-            console.log("Authentication for \"" + clientData.userID + "\" failed.");
+            console.log("Authentication failed. ", err);
         });
 }
 
@@ -95,12 +97,10 @@ export function challenge(req: express.Request, res: express.Response) {
             req.userID = userID;
             req.time = new Date();
             pending[req.challenge] = req;
-
-            res.send(JSON.stringify({
-                infoURL: config.get('baseUrl') + "/info",
-                challenge: req.challenge,
-                appID: appID,
-                keyID: keyID
-            }));
+ 
+            var reply: any = Apps.getInfo(appID); 
+            reply.challenge = req.challenge;
+          
+            res.json(reply);
         });
 }

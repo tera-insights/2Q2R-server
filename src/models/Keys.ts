@@ -44,13 +44,19 @@ export class KeysSchema {
         } else {
             return this.schema.findByPrimary(keyID).then(
                 (key: IKeys.IKeyInstance) => {
-                    key.counter = key.counter + 1;
-                    return this.schema.update(key, {
-                        where: { id: keyID }
-                    }).then(() => {
-                        return u2f.request(appID, keyID);
-                    });
-                }
+                    if (!key)
+                        throw "Key not found";
+
+                    return u2f.request(appID, keyID);
+
+/*
+                    return key.updateAttributes("counter",
+                        key.counter ? key.counter + 1 : 0)
+                        .then(() => {
+                            return u2f.request(appID, keyID);
+                        });
+*/              }
+
             );
         }
     }
@@ -105,7 +111,7 @@ export class KeysSchema {
                     signatureData: signature.signatureData
                 }, key.pubKey);
                 if (res.successful) {
-                    if (res.counter === key.counter) {
+                    if (true || res.counter === key.counter) {
                         return "Authentication approved";
                     } else {
                         throw Error("Counter in signature does not match.");
