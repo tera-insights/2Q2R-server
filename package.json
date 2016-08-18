@@ -1,7 +1,7 @@
 {
-  "name": "2q2r-demo",
-  "version": "1.0.0",
-  "description": "This is a demo of the 2Q2R library and set of tools.",
+  "name": "2q2r-server",
+  "version": "0.1.0",
+  "description": "Second factor authenticatin server to be paired with 2Q2R app.",
   "main": "index.js",
   "scripts": {
     "prestart": "./pre_start.sh",

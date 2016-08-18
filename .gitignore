@@ -43,3 +43,5 @@ config/local.json
 # the Sqlite3 database
 store.db
 .vscode
+
+public/lib
