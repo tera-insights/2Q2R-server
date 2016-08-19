@@ -5,6 +5,7 @@ import * as config from 'config';
 export interface AppInfo {
     name: string;
     authType: "token" | "DSA";
+    img?: string,
     token?: string;
     pubKey?: string;
 }
@@ -83,7 +84,9 @@ export class AppsSchema {
             return {
                 appName: app.name,
                 baseURL:  this.baseURL, 
-                appID: appID
+                appID: appID,
+                icon: this.baseURL+"/icon/"+appID,
+                serverPubKey: "missing"
         }
     }
 

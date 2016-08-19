@@ -219,6 +219,10 @@ export class KeysSchema {
                 allowNull: false,
                 primaryKey: true
             },
+            appID: {
+                type: Sequelize.STRING(128),
+                allowNull: false
+            },
             type: {
                 type: Sequelize.STRING(6),
                 allowNull: false

@@ -16,6 +16,13 @@ export interface IKey {
     keyID: string;
 
     /**
+     * The application for which this key is valid 
+     * 
+     * @type {string}
+     */
+    appID: string;
+
+    /**
      * The key type. Supported types are "u2f" and "2q2r" for now. 
      * This info is only interesting for the frontend and does not change
      * backend behavior. 

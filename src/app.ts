@@ -27,6 +27,7 @@ app.use(morgan('dev'));
 
 app.get('/info/:appID', registerRoutes.info);
 app.get('/info', registerRoutes.info);
+app.get('/icon/:appID');// TODO: finish
 
 
 // registration routes
