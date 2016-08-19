@@ -52,16 +52,14 @@ export class KeysSchema {
                     if (key.fcmToken)
                         reply.fcmToken = key.fcmToken;
 
-                    return reply;
+                    reply.counter = key.counter ? key.counter + 1 : 1; // increment counter
 
-/*
-                    return key.updateAttributes("counter",
-                        key.counter ? key.counter + 1 : 0)
-                        .then(() => {
-                            return u2f.request(appID, keyID);
-                        });
-*/              }
-
+                    return key.updateAttributes({
+                        counter: reply.counter
+                    }).then(() => {
+                        return reply;
+                    });
+                }
             );
         }
     }
@@ -105,8 +103,9 @@ export class KeysSchema {
      * 
      * @param {u2f.IRequest} request
      * @param {u2f.ISignatureData} signature
+     * @param {counter} the value of the counter expected on the signature
      */
-    checkSignature(request: u2f.IRequest, signature: u2f.ISignatureData) {
+    checkSignature(request: u2f.IRequest, signature: u2f.ISignatureData, counter?: number) {
         // change client data to match what u2f expects
         var clientData = new Buffer(signature.clientData).toString('base64');
         return this.schema.findByPrimary(request.keyHandle).then(
@@ -116,7 +115,7 @@ export class KeysSchema {
                     signatureData: signature.signatureData
                 }, key.pubKey);
                 if (res.successful) {
-                    if (true || res.counter === key.counter) {
+                    if (!counter || res.counter === counter) {
                         return "Authentication approved";
                     } else {
                         throw Error("Counter in signature does not match.");

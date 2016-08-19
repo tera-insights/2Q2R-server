@@ -16,6 +16,7 @@ interface IRequest extends u2f.IRequest {
     userID: string,
     time: Date,
     keyHandle: string,
+    counter: number,
     fcmToken?: string,
     // server reply state
     request: express.Response,
@@ -46,7 +47,7 @@ export function authtenticate(req: express.Request, res: express.Response) {
         return;
     }
 
-    Keys.checkSignature(cReq, <u2f.ISignatureData>req.body)
+    Keys.checkSignature(cReq, <u2f.ISignatureData>req.body, cReq.counter)
         .then((msg: string) => {
             if (cReq.request) {
                 cReq.request.status(200).send(msg);
@@ -105,6 +106,7 @@ export function challenge(req: express.Request, res: express.Response) {
 
             var reply: any = Apps.getInfo(appID);
             reply.challenge = req.challenge;
+            reply.counter = req.counter;
 
             // send a Firebase request if we can
             if (req.fcmToken)
@@ -116,7 +118,8 @@ export function challenge(req: express.Request, res: express.Response) {
                     .send({
                         to: req.fcmToken,
                         data: {
-                            authData: "A " + appID + " " + req.challenge + " " + keyID
+                            authData: "A " + appID + " " + req.challenge + " " + 
+                                keyID + " " + req.counter
                         }
                     })
                     .end(function (response) {

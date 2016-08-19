@@ -96,6 +96,8 @@ export function register(req: express.Request, res: express.Response) {
 
 }
 
+
+
 // POST: /register/server
 export function server(req: express.Request, res: express.Response) {
     var challenge = req.body.challenge;
