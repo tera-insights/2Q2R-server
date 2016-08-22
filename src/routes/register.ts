@@ -2,34 +2,61 @@
 /// <reference path="../interfaces/u2f.d.ts" />
 
 import * as express from 'express';
+import * as Promise from "bluebird";
 
 import {Keys, Apps} from '../models';
 import * as config from 'config';
 import * as u2f from "u2f";
+
+var deleteDelay = 5000; // delay in ms to delete requests once answer is obtained
 
 /**
  * This file contains all the routes that deal with registration of devices.
  */
 
 interface IRequest extends u2f.IRequest {
-    userID: string,
-    time: Date,
-    status?: number, // the status of delayed reply
-    message?: string, // the message for delayed reply  
-    request: express.Response
+    userID: string;
+    ID: string; // request ID
+    promise: Promise<any>; // promise that allows the answer to be picked up
+    resolve: Function; // function to announce correct answer
+    reject: Function; // Function to announce failure 
 }
 
-enum Reply {
-    KeyExists,
-    SaveKeyErr,
-    RegistrationOK,
-    DigitalSigErr
+function DelayRemove(id: string, challenge: string){
+    // delete after delay amount
+    setTimeout(()=>{
+        delete pendingByChallenge[challenge];
+        delete pendingByID[id];
+    }, deleteDelay); 
 }
+
+/**
+ * Auxiliary function to send resuld to all listners
+ * @request: the pending request
+ * @obj: the object to send as reply 
+ */
+function Resolve(request: IRequest, obj: any){
+    if (request.resolve)
+        request.resolve(obj);
+    else
+        throw "Could not correctly reply";
+}
+
+function Reject(request: IRequest, status: number, msg: string){
+    if (request.resolve)
+        request.reject({
+            status: status,
+            message: msg
+        });
+    else
+        throw "Could not correctly reply";
+}
+
 
 /**
  * Auxiliary function to help correctly replying to both the server and the registering device.
  */
-function replyBoth(reply: Reply, res: express.Response, req: IRequest) {
+function replyAll(reply: Reply, res: express.Response, req: IRequest) {
     var status = 500; // default status
     var msg = "Unknown error.";
 
@@ -60,33 +87,45 @@ function replyBoth(reply: Reply, res: express.Response, req: IRequest) {
     }
 }
 
-// Set of pending requests
-var pending: { [challenge: string]: IRequest } = {};
+// Set of pending requests by challenge and ID
+var pendingByChallenge: { [challenge: string]: IRequest } = {};
+var pendingByID: { [challenge: string]: IRequest } = {};
 
 // the default appID for backwards compatibility
 var defaultAppID = config.get("defaultAppID");
 
 // GET: /info
 export function info(req: express.Request, res: express.Response) {
-    var appID = req.params.appID ? req.params.appID : defaultAppID; 
+    var appID = req.params.appID ? req.params.appID : defaultAppID;
     var info = Apps.getInfo(appID);
-    console.log("INFO: ", appID, info); 
+    console.log("INFO: ", appID, info);
     res.json(info);
 }
 
 // POST: /register
+/*
+ * Device registration route. 
+ */
 export function register(req: express.Request, res: express.Response) {
     var data = JSON.parse(req.body.clientData);
+    var appID = data.appID;
 
     // make sure we have this challenge pending
-    var cReq = pending[data.challenge];
+    var cReq = pendingByChallenge[data.challenge];
     if (!cReq) { // No valid challenge pending 
         res.status(403).send("Challenge does not exist");
         return;
     }
 
-    Keys.register(cReq.userID, req.body.deviceName, req.body.type || "2q2r", req.body.fcmToken,
-        cReq, <u2f.IRegisterData>req.body).then(
+    if (cReq.appId != appID) { // appIDs do not match, big problem
+        res.status(401).send("The appID in initial request and device reply do not match.");
+        return;
+    }
+
+    Keys.register(cReq.appId, cReq.userID, req.body.deviceName,
+        req.body.type || "2q2r", req.body.fcmToken,
+        cReq, <u2f.IRegisterData>req.body
+    ).then(
         (msg: string) => {
             replyBoth(Reply.RegistrationOK, res, cReq);
         }, (err: Error) => {
@@ -130,7 +169,7 @@ export function challenge(req: express.Request, res: express.Response) {
             req.time = new Date();
             pending[req.challenge] = req;
 
-            var reply: any = Apps.getInfo(appID); 
+            var reply: any = Apps.getInfo(appID);
             reply.challenge = req.challenge;
 
             res.json(reply);

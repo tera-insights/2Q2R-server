@@ -8,13 +8,6 @@ import * as u2f from "u2f";
 
 import * as IKeys from '../interfaces/IKeys';
 
-
-function makeErrorPromise(msg: string) {
-    return new Promise((resolve, reject) => {
-        reject({ errorMsg: msg });
-    })
-}
-
 /**
  * This class implements the schema for Keys. It provides all the 
  * manipulation needed to store and retrieve key info 
@@ -36,32 +29,32 @@ export class KeysSchema {
      * @returns
      */
     generateRequest(appID: string, keyID: string, register?: boolean) {
-        if (register) {
-            // just generate the request
-            return new Promise((resolve) => {
+        return new Promise((resolve) => {
+            if (register) {
+                // just generate the request
                 resolve(u2f.request(appID, keyID));
-            });
-        } else {
-            return this.schema.findByPrimary(keyID).then(
-                (key: IKeys.IKeyInstance) => {
-                    if (!key)
-                        throw "Key not found";
+            } else {
+                resolve(this.schema.findByPrimary(keyID).then(
+                    (key: IKeys.IKeyInstance) => {
+                        if (!key)
+                            throw "Key not found";
 
-                    var reply: any = u2f.request(appID, keyID);
-                    // add the token so we can send a Firebase request
-                    if (key.fcmToken)
-                        reply.fcmToken = key.fcmToken;
+                        var reply: any = u2f.request(appID, keyID);
+                        // add the token so we can send a Firebase request
+                        if (key.fcmToken)
+                            reply.fcmToken = key.fcmToken;
 
-                    reply.counter = key.counter ? key.counter + 1 : 1; // increment counter
+                        reply.counter = key.counter ? key.counter + 1 : 1; // increment counter
 
-                    return key.updateAttributes({
-                        counter: reply.counter
-                    }).then(() => {
-                        return reply;
-                    });
-                }
-            );
-        }
+                        return key.updateAttributes({
+                            counter: reply.counter
+                        }).then(() => {
+                            return reply;
+                        });
+                    }
+                ));
+            }
+        });
     }
 
     /**
@@ -74,27 +67,30 @@ export class KeysSchema {
      * @param {u2f.IRegisterData} registerData Registration data from device
      * @returns
      */
-    register(userid: string, name: string, type: string, fcmToken: string,
+    register(appid: string, userid: string, name: string, type: string, fcmToken: string,
         request: u2f.IRequest, registerData: u2f.IRegisterData) {
-        // first check the registration
-        var clientData = new Buffer(registerData.clientData).toString('base64');
-        var res = u2f.checkRegistration(request, {
-            clientData: clientData,
-            registrationData: registerData.registrationData
-        });
-        if (res.successful) {
-            return this.schema.create({
-                keyID: res.keyHandle,
-                userID: userid,
-                type: type,
-                pubKey: res.publicKey,
-                name: name,
-                counter: 0,
-                fcmToken: fcmToken
+        return new Promise((resolve, reject) => {
+            // first check the registration
+            var clientData = new Buffer(registerData.clientData).toString('base64');
+            var res = u2f.checkRegistration(request, {
+                clientData: clientData,
+                registrationData: registerData.registrationData
             });
-        } else {
-            return makeErrorPromise(res.errorMessage);
-        }
+            if (res.successful) {
+                resolve(this.schema.create({
+                    keyID: res.keyHandle,
+                    userID: userid,
+                    appID: appid,
+                    type: type,
+                    pubKey: res.publicKey,
+                    name: name,
+                    counter: 0,
+                    fcmToken: fcmToken
+                }));
+            } else {
+                reject(res.errorMessage);
+            }
+        });
     }
 
     /**
@@ -135,24 +131,22 @@ export class KeysSchema {
      * @param {string} name
      * @param {string} fcmToken
      */
-    update(id: string, name: string, fcmToken: string) {
-        // figure out what to update
-        var fields = [];
-        if (name) fields.push("name");
-        if (fcmToken) fields.push("fcmToken");
+    update(appid: string, id: string, name: string, fcmToken: string) {
+        return this.schema.findByPrimary(id).then(
+            (key: IKeys.IKeyInstance) => {
+                if (!key)
+                    throw "Key not found";
 
-        return this.schema.update({
-            keyID: id,
-            name: name,
-            fcmToken: fcmToken,
-            userID: null,
-            type: null,
-            pubKey: null,
-            counter: null
-        }, {
-                where: { keyID: id },
-                fields: fields
-            });
+                if (appid != key.appID)
+                    throw "AppID does not match the request";
+
+                var updateObj: any = {}
+                if (name) updateObj.name = name;
+                if (fcmToken) updateObj.fcmToken = fcmToken;
+
+                return key.updateAttributes(updateObj);
+            }
+        );
     }
 
     /**
@@ -162,9 +156,9 @@ export class KeysSchema {
      * @param {string} id
      * @returns {Promise<number>}
      */
-    delete(id: string) {
+    delete(appid: string, id: string) {
         return this.schema.destroy({
-            where: { keyID: id }
+            where: { appID: appid, keyID: id }
         });
     }
 
@@ -174,9 +168,9 @@ export class KeysSchema {
      * @param {string} userid
      * @returns {Promise<ITodo[]>}
      */
-    get(userid: string) {
+    get(appid: string, userid: string) {
         return this.schema.findAll({
-            where: { userID: userid },
+            where: { appID: appid, userID: userid },
             attributes: ['keyID', 'type', 'name', 'counter']
         });
     }
@@ -187,9 +181,9 @@ export class KeysSchema {
      * @param {string} userid
      * @returns Promise<boolean>
      */
-    userExists(userid: string) {
+    userExists(appid: string, userid: string) {
         return this.schema.count({
-            where: { userID: userid }
+            where: { appID: appid, userID: userid }
         }).then((cnt: number) => {
             return cnt > 0;
         });
@@ -202,9 +196,9 @@ export class KeysSchema {
      * @param {string} userid
      * @returns
      */
-    deleteUser(userid: string) {
+    deleteUser(appid: string, userid: string) {
         return this.schema.destroy({
-            where: { userID: userid }
+            where: { userID: userid, appID: appid }
         });
     }
 
