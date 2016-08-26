@@ -25,29 +25,38 @@ app.use(bodyParser.json());
 // Pretty logs
 app.use(morgan('dev'));
 
-app.get('/info/:appID', registerRoutes.info);
-app.get('/info', registerRoutes.info);
-app.get('/icon/:appID');// TODO: finish
+app.get('/v1/info/:appID', registerRoutes.info);
+app.get('/v1/info', registerRoutes.info);
+app.get('/v1/icon/:appID');// TODO: finish
 
 
 // registration routes
-app.post('/register/challenge', s2s.ensureServer, registerRoutes.challenge); 
-app.post('/register/server',s2s.ensureServer, registerRoutes.server); 
-app.post('/register',registerRoutes.register);
+app.post('/v1/register/request', s2s.ensureServer, registerRoutes.request);
+app.get ('/v1/register/:id/wait', registerRoutes.wait);
+//TODO: remove challenge, inject in iframe
+app.post('/v1/register/challenge', s2s.ensureServer, registerRoutes.challenge); 
+app.post('/v1/register',registerRoutes.register);
+
+// TODO: finish this
+app.get('/register/:id'); 
 
 // authentication routes
-app.post('/auth/challenge', s2s.ensureServer, authRoutes.challenge); 
-app.post('/auth/server', s2s.ensureServer, authRoutes.server); 
-app.post('/auth',authRoutes.authtenticate);
+app.post('/v1/auth/request'); // TODO: finish
+app.post('/v1/auth/:id/wait');
+// TODO: remove, embeded into iframe
+app.post('/v1/auth/challenge', s2s.ensureServer, authRoutes.challenge); 
+// TODO: remove
+app.post('/v1/auth/server', s2s.ensureServer, authRoutes.server); 
+app.post('/v1/auth',authRoutes.authtenticate);
 
 // key routes
-app.post('/keys/list/:userID', s2s.ensureServer, keys.getKeys);
-app.post('/keys/delete/:keyID/device', keys.deleteDevKey);
-app.post('/keys/delete/:keyID', s2s.ensureServer, keys.deleteKey);
+app.post('/v1/keys/list/:userID', s2s.ensureServer, keys.getKeys);
+app.post('/v1/keys/delete/:keyID/device', keys.deleteDevKey);
+app.post('/v1/keys/delete/:keyID', s2s.ensureServer, keys.deleteKey);
 
 // user routes
-app.post('/users/exists', s2s.ensureServer, users.existsUser);
-app.post('/users/delete/:userID', s2s.ensureServer, users.deleteUser);
+app.post('/v1/users/exists', s2s.ensureServer, users.existsUser);
+app.post('/v1/users/delete/:userID', s2s.ensureServer, users.deleteUser);
 
 // Listen on desired port
 var port = config.get("port");

@@ -85,8 +85,8 @@ export class AppsSchema {
                 appName: app.name,
                 baseURL:  this.baseURL, 
                 appID: appID,
-                icon: this.baseURL+"/icon/"+appID,
-                serverPubKey: "missing"
+                serverPubKey: "missing",
+                serverKeyType: "P256"
         }
     }
 
