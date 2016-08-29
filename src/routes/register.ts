@@ -55,15 +55,20 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
+    console.log("Start register:", data, cReq, req.body.deviceName);
+
     Keys.register(cReq.appId, cReq.userID, req.body.deviceName,
         req.body.type || "2q2r", req.body.fcmToken,
         cReq, <u2f.IRegisterData>req.body
     ).then(
         (msg: string) => {
+            console.log("Register resolving:", msg);
             pending.resolve(cReq, msg);
+            res.status(200).send("OK");
         }, (err: Error) => {
             console.log("Error:", err);
             pending.reject(cReq, 400, err.message);
+            res.status(400).send("Registration failed");
         });
 
 }

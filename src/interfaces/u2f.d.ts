@@ -5,9 +5,9 @@ declare module 'u2f' {
      * @interface IRequest
      */
     interface IRequest {
-        version: string;
-        appId: string;
-        challenge: string;
+        version?: string;
+        appId?: string;
+        challenge?: string;
         keyHandle?: string; 
     }
 

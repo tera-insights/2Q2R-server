@@ -52,12 +52,9 @@ app.get ('/register/:id', registerRoutes.iframe);
 app.get ('/register/:id');
 
 // authentication routes
-app.post('/v1/auth/request'); // TODO: finish
-app.post('/v1/auth/:id/wait');
-// TODO: remove, embeded into iframe
-app.post('/v1/auth/challenge', s2s.ensureServer, authRoutes.challenge);
-// TODO: remove
-app.post('/v1/auth/server', s2s.ensureServer, authRoutes.server);
+app.post('/v1/auth/request', authRoutes.request); // TODO: finish
+app.get ('/v1/auth/:id/wait', authRoutes.wait);
+app.post('/v1/auth/:id/challenge', s2s.ensureServer, authRoutes.challenge);
 app.post('/v1/auth', authRoutes.authtenticate);
 
 // key routes

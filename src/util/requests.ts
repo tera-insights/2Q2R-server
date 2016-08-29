@@ -8,11 +8,11 @@ import * as config from 'config';
 var deleteDelay = 5000; // delay in ms to delete requests once answer is obtained
 
 export interface IRequest {
-    challenge: string;
-    id: string; 
-    promise: Promise<any>; // promise that allows the answer to be picked up
-    resolve: Function; // function to announce correct answer
-    reject: Function; // Function to announce failure 
+    challenge?: string;
+    id?: string; 
+    promise?: Promise<any>; // promise that allows the answer to be picked up
+    resolve?: Function; // function to announce correct answer
+    reject?: Function; // Function to announce failure 
 }
 
 /**
@@ -106,10 +106,29 @@ export class PendingRequests {
             request.reject = reject;
         });
 
-        this.pendingByChallenge[request.challenge] = request;
+        if (request.challenge)
+            this.pendingByChallenge[request.challenge] = request;
         this.pendingByID[id] = request;
 
         return id;
+    }
+
+    /**
+     * Replace an existing request with a new one. Useful when a request
+     * is only partially formed.
+     * 
+     * @param {IRequest} request
+     */
+    replace(id: string, request: IRequest) {
+        var old = this.pendingByID[id];
+        request.promise = old.promise;
+        request.resolve = old.resolve;
+        request.reject = old.reject;
+        request.id = id;
+        if (old.challenge)
+            delete this.pendingByChallenge[old.challenge];
+        this.pendingByID[id] = request;
+        this.pendingByChallenge[request.challenge] = request; 
     }
 
     constructor() {

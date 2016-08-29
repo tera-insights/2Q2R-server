@@ -8,124 +8,175 @@ import {Keys, Apps} from '../models';
 import * as config from 'config';
 import * as u2f from "u2f";
 
+import * as util from '../util';
+
 /**
  * This file contains all the routes that deal with authentication of devices.
  */
 
-interface IRequest extends u2f.IRequest {
+interface IRequest extends u2f.IRequest, util.IRequest {
     userID: string,
-    time: Date,
-    keyHandle: string,
-    counter: number,
+    appID: string,
+    counter?: number,
     fcmToken?: string,
-    // server reply state
-    request: express.Response,
-    status?: number,
-    message?: string,
 }
 
 // Set of pending requests
-var pending: { [challenge: string]: IRequest } = {};
+var pending = new util.PendingRequests();
 
 // cache the Firebase Communicator key
 var fbServerKey = config.get("fbServerKey");
 
 // POST: /auth
 export function authtenticate(req: express.Request, res: express.Response) {
-    var clientData: any = {};
+    var data: any = {};
     try {
-        clientData = JSON.parse(req.body.clientData);
+        data = JSON.parse(req.body.clientData);
     } catch (e) {
         res.status(404).send("Invalid request");
     }
 
-    var cReq = pending[clientData.challenge];
+    var cReq = <IRequest>pending.getByChallenge(data.challenge);
 
     if (!cReq /*|| cReq.userID != clientData.userID 
      || cReq.keyHandle != clientData.keyID*/) { // No valid challenge pending 
-        res.status(401).send("Request invalid");
+        res.status(403).send("Challenge does not exist");
         return;
     }
+
+    //TODO: add appID in request
+    var appID = data.appID ? data.appID : cReq.appId;
+
+    if (cReq.appId != appID) { // appIDs do not match, big problem
+        console.log(cReq, data);
+        res.status(402).send("The appID in initial request and device reply do not match.");
+        return;
+    }
+
+    console.log("Start login:", data, cReq);
 
     Keys.checkSignature(cReq, <u2f.ISignatureData>req.body, cReq.counter)
         .then((msg: string) => {
-            if (cReq.request) {
-                cReq.request.status(200).send(msg);
-                delete pending[clientData.challenge];
-            } else {
-                cReq.status = 200;
-                cReq.message = msg;
-            }
-            res.status(200).send("Authentication successful.");
+            console.log("Authentication resolving:", msg);
+            pending.resolve(cReq, msg);
+            res.status(200).send("OK");
         }, (err: Error) => {
-            if (cReq.request) {
-                cReq.request.status(400).send(err.message);
-                delete pending[clientData.challenge];
-            } else {
-                cReq.status = 400;
-                cReq.message = err.message;
-            }
-            res.status(400).send("Authentication failed.");
-            console.log("Authentication failed. ", err);
+            console.log("Error:", err);
+            pending.reject(cReq, 400, err.message);
+            res.status(400).send("Authentication failed");
         });
 }
 
-// POST: /auth/server
-export function server(req: express.Request, res: express.Response) {
-    var challenge = req.body.challenge;
-    var userID = req.body.userID;
-    var keyID = req.body.keyID;
+// GET: /auth/:id/wait
+export function wait(req: express.Request, res: express.Response) {
+    var id = req.params.id;
+    pending.waitByID(id)
+        .then(() => {
+            res.status(200).send("OK");
+        }, (error) => {
+            res.status(400).send(error);
+        });
+}
 
-    var cReq = pending[challenge];
-    if (!cReq || cReq.userID != userID || cReq.keyHandle != keyID) { // No valid challenge pending 
-        res.status(401).send("Request invalid");
+// POST: /v1/auth/:id/select
+export function challenge(req: express.Request, res: express.Response) {
+    var keyID = req.body.keyID;
+    var id = req.params.id;
+
+    // look up the request
+    var cReq = <IRequest>pending.getByID(id);
+
+    if (!cReq) {
+        res.status(403).send("Request does not exist");
         return;
     }
 
-    if (cReq.status) {
-        // fullfil this rightaway and remove the pending challenge
-        delete pending[challenge];
-        res.status(cReq.status).send(cReq.message);
-    } else {
-        // que up this request
-        cReq.request = res;
-    }
-}
 
-// POST: /auth/challenge
-export function challenge(req: express.Request, res: express.Response) {
-    var userID = req.body.userID;
-    var keyID = req.body.keyID;
-    var appID = req.body.appID;
-
-    Keys.generateRequest(appID, keyID, false)
+    Keys.generateRequest(cReq.appID, keyID, false)
         .then((req: IRequest) => {
-            req.userID = userID;
-            req.time = new Date();
-            pending[req.challenge] = req;
+            req.userID = cReq.userID;
+            req.appID = cReq.appID;
 
-            var reply: any = Apps.getInfo(appID);
-            reply.challenge = req.challenge;
-            reply.counter = req.counter;
+            console.log("Request:", req);
+            pending.replace(id, req);
 
             // send a Firebase request if we can
-            if (req.fcmToken)
+            if (req.fcmToken) {
                 unirest.post("https://fcm.googleapis.com/fcm/send")
                     .headers({
                         "Authorization": "key=" + fbServerKey,
                         "Content-Type": "application/json"
                     })
                     .send({
-                        to: req.fcmToken,
+                        to: cReq.fcmToken,
                         data: {
-                            authData: "A " + appID + " " + req.challenge + " " + 
-                                keyID + " " + req.counter
+                            authData: "A " + req.appId + " " + req.challenge + " " +
+                            keyID + " " + req.counter
                         }
                     })
                     .end(function (response) {
                         console.log("Firebase request: ", response.statusCode);
                     });
+            }
 
-            res.json(reply);
+            res.json({
+                keyID: keyID,
+                challenge: req.challenge,
+                counter: req.counter,
+                appID: cReq.appID
+            })
         });
 }
+
+// POST: /auth/request
+export function request(req: express.Request, res: express.Response) {
+    var userID = req.body.userID;
+    var appID = req.body.appID;
+
+    var info = Apps.getInfo(appID);
+
+    var rep: IRequest = {
+        userID: userID,
+        appID: appID
+    };
+
+    var id = pending.add(req);
+
+    res.json({
+        id: id,
+        authUrl: info.baseURL + "/auth/" + id,
+        waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
+    });
+}
+
+
+export function iframe(req: express.Request, res: express.Response) {
+    var id = req.params.id;
+    var cReq = <IRequest>pending.getByID(id);
+    var info = Apps.getInfo(cReq.appId);
+
+    if (!cReq || !info) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+
+    Keys.get(cReq.appID, cReq.userID)
+        .then((keys) => {
+            res.render('auth', {
+                layout: false,
+                data: {
+                    id: id,
+                    counter: cReq.counter,
+                    keys: keys,
+                    challenge: cReq.challenge,
+                    userID: cReq.userID,
+                    appId: cReq.appId,
+                    infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
+                    waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
+                    challengeUrl: info.baseURL + "/v1/auth/" + id + "/challenge",
+                }
+            });
+
+        });
+}
+
