@@ -21,14 +21,14 @@ interface IRequest extends u2f.IRequest, util.IRequest {
 
 var pending = new util.PendingRequests();
 
-// the default appID for backwards compatibility
-var defaultAppID = config.get("defaultAppID");
-
 // GET: /info
 export function info(req: express.Request, res: express.Response) {
-    var appID = req.params.appID ? req.params.appID : defaultAppID;
+    var appID = req.params.appID;
     var info = Apps.getInfo(appID);
-    res.json(info);
+    if (info)
+        res.json(info);
+    else
+        res.status(401).send("Application ID does not exist.");
 }
 
 // POST: /register

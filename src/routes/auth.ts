@@ -140,7 +140,7 @@ export function request(req: express.Request, res: express.Response) {
         appID: appID
     };
 
-    var id = pending.add(req);
+    var id = pending.add(rep);
 
     res.json({
         id: id,
@@ -153,7 +153,7 @@ export function request(req: express.Request, res: express.Response) {
 export function iframe(req: express.Request, res: express.Response) {
     var id = req.params.id;
     var cReq = <IRequest>pending.getByID(id);
-    var info = Apps.getInfo(cReq.appId);
+    var info = Apps.getInfo(cReq.appID);
 
     if (!cReq || !info) {
         res.status(401).send("Unauthorized");
