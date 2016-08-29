@@ -96,7 +96,7 @@ export class PendingRequests {
     add(request: IRequest): string {
         // generate 16 random bytes and convert to base64Web
         var id = crypto.randomBytes(16).toString('base64')
-            .replace(/\//g, '_').replace(/\+/g, '-');
+            .replace(/\//g, '_').replace(/\+/g, '-').replace(/\=/g, '');
         
         request.id = id;
 

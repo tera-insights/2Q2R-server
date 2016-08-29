@@ -12,6 +12,14 @@ export interface AppInfo {
 
 export type AppInfoMap = { [appID: string]: AppInfo };
 
+export interface IAppInfo {
+    appName: string;
+    baseURL: string;
+    appID: string;
+    serverPubKey: string;
+    serverKeyType: string;
+}
+
 
 /**
  * Returns the IP address of the server.
@@ -77,7 +85,7 @@ export class AppsSchema {
         }
     }
 
-    getInfo(appID: string): any {
+    getInfo(appID: string): IAppInfo {
         var app = this.apps[appID];
         if (!app) return undefined;
         else

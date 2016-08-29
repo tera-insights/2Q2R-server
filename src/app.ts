@@ -4,6 +4,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as passport from 'passport';
 import * as session from 'express-session';
+import * as exphbs from 'express-handlebars';
 import * as morgan from 'morgan';
 import * as mongoose from 'mongoose';
 
@@ -20,7 +21,18 @@ import * as users from './routes/users';
 var app = express();
 var server = require('http').createServer(app);
 
+app.engine('handlebars', exphbs({
+    defaultLayout: 'main',
+    helpers: {
+        toJSON: function (object) {
+            return JSON.stringify(object);
+        }
+    }
+}));
+app.set('view engine', 'handlebars');
+
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
 // Pretty logs
 app.use(morgan('dev'));
@@ -33,21 +45,20 @@ app.get('/v1/icon/:appID');// TODO: finish
 // registration routes
 app.post('/v1/register/request', s2s.ensureServer, registerRoutes.request);
 app.get ('/v1/register/:id/wait', registerRoutes.wait);
-//TODO: remove challenge, inject in iframe
-app.post('/v1/register/challenge', s2s.ensureServer, registerRoutes.challenge); 
-app.post('/v1/register',registerRoutes.register);
+app.post('/v1/register', registerRoutes.register);
+app.get ('/register/:id', registerRoutes.iframe);
 
 // TODO: finish this
-app.get('/register/:id'); 
+app.get ('/register/:id');
 
 // authentication routes
 app.post('/v1/auth/request'); // TODO: finish
 app.post('/v1/auth/:id/wait');
 // TODO: remove, embeded into iframe
-app.post('/v1/auth/challenge', s2s.ensureServer, authRoutes.challenge); 
+app.post('/v1/auth/challenge', s2s.ensureServer, authRoutes.challenge);
 // TODO: remove
-app.post('/v1/auth/server', s2s.ensureServer, authRoutes.server); 
-app.post('/v1/auth',authRoutes.authtenticate);
+app.post('/v1/auth/server', s2s.ensureServer, authRoutes.server);
+app.post('/v1/auth', authRoutes.authtenticate);
 
 // key routes
 app.post('/v1/keys/list/:userID', s2s.ensureServer, keys.getKeys);

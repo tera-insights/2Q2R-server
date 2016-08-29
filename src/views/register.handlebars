@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>2Q2R Registraion Frame</title>
+    <link rel="stylesheet" type="text/css" href="/lib/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <link rel="stylesheet" type="text/css" href="/css/register.css">
+</head>
+
+<script type="text/javascript">
+    // injected data
+    var data = {{{toJSON data}}};
+</script>
+
+<script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/lib/jquery-qrcode/jquery.qrcode.min.js"></script>
+<script type="text/javascript" src="/lib/u2f-api/u2f-api-polyfill.js"></script>
+<script type="text/javascript" src="/lib/semantic/dist/semantic.min.js"></script>
+
+<script type="text/javascript" src="/js/base.js"></script>
+<script type="text/javascript" src="/js/register.js"></script>
+
+<body>
+    <section state="keytype">
+        <div class="ui form" id="form-kt">
+            <div class="grouped fields">
+                <label>Select the key type to register</label>
+                <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" value="2q2r" name="keyradio" checked="checked">
+                    <label>2Q2R App</label>
+                </div>
+                </div>
+                <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" value="u2f" name="keyradio">
+                    <label>FIDO U2F Device</label>
+                </div>
+                </div>
+                <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" value="software" name="keyradio">
+                    <label>Software Key</label>
+                </div>
+                </div>
+                <div class="field">
+                <div class="ui radio checkbox">
+                    <input type="radio" value="bypass" name="keyradio">
+                    <label>Bypass Key</label>
+                </div>
+                </div>
+            </div>
+            <button class="ui blue button" id="continue">Continue</button>
+        </div>
+    </section>
+    <section state="2q2r-generate">
+        <h1> Scan the QR code with your 2Q2R App </h1>
+        <div class="demo-qr" id="qrcode"></div>
+        <button class="ui  button" id="back">Back</button>
+        <button class="ui blue button" id="continue">Continue</button>
+    </section>
+    <section state="u2f-generate">
+        <h1> FIDO U2F Generate </h1>
+    </section>
+    <section state="software-generate">
+        <h1> Software Generate </h1>
+    </section>
+    <section state="bypass-generate">
+        <h1> Bypass Generate </h1>
+    </section>
+
+    
+
+
+    
+
+</body>
+</html>

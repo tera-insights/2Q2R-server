@@ -46,7 +46,11 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
+    //TODO: add appID in request
+    appID = appID ? appID : cReq.appId;
+
     if (cReq.appId != appID) { // appIDs do not match, big problem
+        console.log(cReq, data);
         res.status(402).send("The appID in initial request and device reply do not match.");
         return;
     }
@@ -64,44 +68,58 @@ export function register(req: express.Request, res: express.Response) {
 
 }
 
-// POST: /register/challenge
-export function challenge(req: express.Request, res: express.Response) {
-    var userID = req.body.userID;
-    var appID = req.body.appID;
-
-    Keys.generateRequest(appID, null, true)
-        .then((req: IRequest) => {
-            req.userID = userID;
-            var id = pending.add(req);
-
-            var reply: any = Apps.getInfo(appID);
-            reply.challenge = req.challenge;
-            reply.id = id;
-
-            res.json(reply);
-        });
-}
-
 // POST: /register/request
 export function request(req: express.Request, res: express.Response) {
     var userID = req.body.userID;
     var appID = req.body.appID;
 
+    var info = Apps.getInfo(appID);
+
     Keys.generateRequest(appID, null, true)
         .then((req: IRequest) => {
             req.userID = userID;
+            console.log("Request:", req);
             var id = pending.add(req);
-            res.json({id: id});
+            res.json({
+                id: id,
+                registerUrl: info.baseURL + "/register/" + id,
+                waitUrl: info.baseURL + "/v1/register/" + id + "/wait",
+            });
         });
 }
 
-// GET: /register/:id
+// GET: /register/:id/wait
 export function wait(req: express.Request, res: express.Response) {
     var id = req.params.id;
     pending.waitByID(id)
-        .then( () => {
+        .then(() => {
             res.status(200).send("OK");
         }, (error) => {
             res.status(400).send(error);
         });
 }
+
+export function iframe(req: express.Request, res: express.Response) {
+    var id = req.params.id;
+    var cReq = <IRequest>pending.getByID(id);
+    var info = Apps.getInfo(cReq.appId);
+
+    if (!cReq || !info) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+
+    res.render('register', {
+        layout: false,
+        data: {
+            id: id,
+            keyTypes: ["2q2r", "u2f"],
+            challenge: cReq.challenge,
+            userID: cReq.userID,
+            appId: cReq.appId,
+            infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
+            waitUrl: info.baseURL + "/v1/register/" + id + "/wait"
+        }
+    });
+}
+

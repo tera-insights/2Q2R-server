@@ -8,6 +8,7 @@
     "config": "registry:dt/config#0.0.0+20160317120654",
     "d3": "github:DefinitelyTyped/DefinitelyTyped/d3/d3.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
     "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#001ca36ba58cef903c4c063555afb07bbc36bb58",
+    "express-handlebars": "registry:dt/express-handlebars#0.0.0+20160316155526",
     "express-session": "github:DefinitelyTyped/DefinitelyTyped/express-session/express-session.d.ts#d6c98baa7fd703e449cf37f3ec39ed3bd92cfd35",
     "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#a6ff9f6e195a334afd89e4b721d05e9520eee4c0",
     "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#6f6e5c7dd9effe21fee14eb65fe340ecbbc8580a",
