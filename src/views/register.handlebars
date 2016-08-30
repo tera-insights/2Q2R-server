@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- title, meta, etc -->
     <meta charset="utf-8">
     <title>2Q2R Registraion Frame</title>
+
+    <!-- stylesheets -->
     <link rel="stylesheet" type="text/css" href="/lib/semantic/dist/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="/css/base.css">
     <link rel="stylesheet" type="text/css" href="/css/register.css">
+
+    <!-- injection of variables -->
+    <script type="text/javascript">
+        // injected data
+        var data = {{{toJSON data}}};
+    </script>
+
+    <!-- outside scripts -->
+    <script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/lib/jquery-qrcode/jquery.qrcode.min.js"></script>
+    <script type="text/javascript" src="/lib/u2f-api/u2f-api-polyfill.js"></script>
+    <script type="text/javascript" src="/lib/semantic/dist/semantic.min.js"></script>
+
+    <!-- our scripts, load last -->
+    <script type="text/javascript" src="/js/base.js"></script>
+    <script type="text/javascript" src="/js/register.js"></script>
 </head>
 
-<script type="text/javascript">
-    // injected data
-    var data = {{{toJSON data}}};
-</script>
 
-<script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="/lib/jquery-qrcode/jquery.qrcode.min.js"></script>
-<script type="text/javascript" src="/lib/u2f-api/u2f-api-polyfill.js"></script>
-<script type="text/javascript" src="/lib/semantic/dist/semantic.min.js"></script>
-
-<script type="text/javascript" src="/js/base.js"></script>
-<script type="text/javascript" src="/js/register.js"></script>
 
 <body>
-    <section state="keytype">
+    <!-- our toolbar -->
+    <div class="register-toolbar">
+        <img src="/img/2q2r-logo-word.syousvg" class="register-toolbar-brand">
+        <a href="javascript:void(0)" class="register-toolbar-action">
+            <div class="ui dropdown">
+                <input type="hidden">
+                <img src="/img/settings.svg" class="">
+                <div class="menu">
+                    <div class="item">This should do something</div>
+                    <div class="divider"></div>
+                    <div class="item">About 2Q2R</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- select your key type -->
+    <section class="register select-type" state="keytype">
         <div class="ui form" id="form-kt">
             <div class="grouped fields">
                 <label>Select the key type to register</label>
@@ -54,7 +78,8 @@
             <button class="ui blue button" id="continue">Continue</button>
         </div>
     </section>
-    <section state="2q2r-generate">
+    <!-- if 2q2r app -->
+    <section class="register" state="2q2r-generate">
         <h1> Scan the QR code with your 2Q2R App </h1>
         <div class="qr-container">
             <div id="qrcode"></div>
@@ -64,13 +89,19 @@
         <button class="ui  button" id="back">Back</button>
         <button class="ui blue button" id="continue">Continue</button>
     </section>
-    <section state="u2f-generate">
+
+    <!-- if u2f device -->
+    <section class="register" state="u2f-generate">
         <h1> FIDO U2F Generate </h1>
     </section>
-    <section state="software-generate">
+
+    <!-- if software key -->
+    <section class="register" state="software-generate">
         <h1> Software Generate </h1>
     </section>
-    <section state="bypass-generate">
+
+    <!-- if you want to bypass generation -->
+    <section class="register" state="bypass-generate">
         <h1> Bypass Generate </h1>
     </section>
 </body>

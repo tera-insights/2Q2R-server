@@ -1,0 +1,9 @@
+/* steps of the register process */
+
+/* select your type of key to register */
+.select-type {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}

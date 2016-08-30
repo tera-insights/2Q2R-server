@@ -5,7 +5,11 @@ var states = {};
  * This function must be called once the page is loaded
  */
 function init() {
+    // initialize checkboxes
     $('.ui.checkbox').checkbox();
+
+    // initialize dropdowns
+    $('.ui.dropdown').dropdown();
 
     // JQuery Shim to post JSON
     jQuery["postJSON"] = function (url, data, callback) {
