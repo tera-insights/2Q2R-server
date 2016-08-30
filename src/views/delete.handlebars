@@ -19,41 +19,22 @@
 <script type="text/javascript" src="/lib/semantic/dist/semantic.min.js"></script>
 
 <script type="text/javascript" src="/js/base.js"></script>
-<script type="text/javascript" src="/js/auth.js"></script>
+<script type="text/javascript" src="/js/delete.js"></script>
 
 <body>
     <section state="keyselect">
         <div class="ui form" id="form-kt">
             <div class="grouped fields" id="keylist">
-                <label>Select the key</label>
+                <label>Select the keys to delete </label>
 
             </div>
         </div>
-        <button class="ui blue button" id="continue">Continue</button>
+        <button class="ui blue button" id="continue">Delete</button>
     </section>
 
-    <section state="2q2r-login">
-        <h1> Scan the QR code with your 2Q2R App </h1>
-        <div class="qr-container">
-            <div id="qrcode"></div>
-            <div id="challenge-big"></div>
-            <div  id="challenge-small"></div>
-        </div>
-        <button class="ui  button" id="back">Back</button>
-        <button class="ui blue button" id="continue">Continue</button>
+    <section state="deleted">
+        <h1> Keys succesfully deleted </h1>
+        
     </section>
-
-    <section state="u2f-login">
-        <h1> Not Implemented Yet </h1>
-    </section>
-
-    <section state="software-login">
-        <h1> Not Implemented Yet </h1>
-    </section>
-
-    <section state="bypass-login">
-        <h1> Not Implemented Yet </h1>
-    </section>
-
 </body>
 </html>  

@@ -26,7 +26,7 @@ addState("2q2r-generate", function (sel) {
         width: 160, height: 160
     });
 
-    var disp = displayableChallenge(res.challenge);
+    var disp = displayableChallenge(data.challenge);
     $("#challenge-big", sel).text(disp.big);
     $("#challenge-small", sel).text(disp.small);
 

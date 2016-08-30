@@ -59,9 +59,11 @@ app.post('/v1/auth/', authRoutes.authtenticate);
 app.get ('/auth/:id', authRoutes.iframe);
 
 // key routes
-app.post('/v1/keys/list/:userID', s2s.ensureServer, keys.getKeys);
+app.post('/v1/key/request', s2s.ensureServer, keys.request);
+app.get ('/v1/key/:id/wait', keys.wait);
+app.post('/v1/key/:id/remove', s2s.ensureServer, keys.deleteKey);
+app.get ('/keys/delete/:id', keys.iframe);
 app.post('/v1/keys/delete/:keyID/device', keys.deleteDevKey);
-app.post('/v1/keys/delete/:keyID', s2s.ensureServer, keys.deleteKey);
 
 // user routes
 app.post('/v1/users/exists', s2s.ensureServer, users.existsUser);
