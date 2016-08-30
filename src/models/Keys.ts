@@ -34,6 +34,7 @@ export class KeysSchema {
                 // just generate the request
                 resolve(u2f.request(appID, keyID));
             } else {
+                console.log("Request: ", appID, keyID);
                 resolve(this.schema.findByPrimary(keyID).then(
                     (key: IKeys.IKeyInstance) => {
                         if (!key)
@@ -171,12 +172,12 @@ export class KeysSchema {
     get(appid: string, userid: string) {
         return this.schema.findAll({
             where: { appID: appid, userID: userid },
-            attributes: ['keyID', 'type', 'name', 'counter']
+            attributes: ['keyID', 'type', 'name']
         });
     }
 
     /**
-     * Check wheter the user has any keys, i.e. it exists 
+     * Check whether the user has any keys, i.e. it exists 
      * 
      * @param {string} userid
      * @returns Promise<boolean>

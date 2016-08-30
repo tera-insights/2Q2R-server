@@ -1,0 +1,24 @@
+#challenge-big {
+    font-size: 24px;
+    width: 100%;
+    text-align: center
+}
+
+#challenge-small {
+    font-size: 12px;
+    width: 100%;
+    text-align: center
+}
+
+#qrcode {
+    padding: 10px;
+}
+
+.qr-container {
+    width: 180px;
+    background-color: white;
+}
+
+section {
+    display: none
+}

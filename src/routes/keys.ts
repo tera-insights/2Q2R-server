@@ -9,7 +9,8 @@ import {Keys} from '../models';
 
 export function getKeys(req: express.Request, res: express.Response) {
     var userID = req.params.userID;
-    Keys.get(userID).then(
+    var appID = req.params.appID;
+    Keys.get(appID, userID).then(
         (keys) => {
             res.json(keys);
         }, (err:Error) => {
@@ -20,7 +21,8 @@ export function getKeys(req: express.Request, res: express.Response) {
 
 export function deleteKey(req: express.Request, res: express.Response) {
     var keyID = req.params.keyID;
-    Keys.delete(keyID).then(
+    var appID = req.params.appID;
+    Keys.delete(appID, keyID).then(
         () => {
             res.status(200).send("Key "+keyID+" deleted.");
         }, (err: Error) => {

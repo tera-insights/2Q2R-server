@@ -54,7 +54,7 @@ app.get ('/register/:id');
 // authentication routes
 app.post('/v1/auth/request', authRoutes.request); // TODO: finish
 app.get ('/v1/auth/:id/wait', authRoutes.wait);
-app.post('/v1/auth/:id/challenge', s2s.ensureServer, authRoutes.challenge);
+app.post('/v1/auth/:id/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authtenticate);
 app.get ('/auth/:id', authRoutes.iframe);
 

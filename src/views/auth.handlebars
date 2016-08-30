@@ -22,6 +22,25 @@
 <script type="text/javascript" src="/js/auth.js"></script>
 
 <body>
-    <h1> I'm here </h1>
+    <section state="keyselect">
+        <div class="ui form" id="form-kt">
+            <div class="grouped fields" id="keylist">
+                <label>Select the key</label>
+
+            </div>
+        </div>
+        <button class="ui blue button" id="continue">Continue</button>
+    </section>
+
+    <section state="2q2r-login">
+        <h1> Scan the QR code with your 2Q2R App </h1>
+        <div class="qr-container">
+            <div id="qrcode"></div>
+            <div id="challenge-big"></div>
+            <div  id="challenge-small"></div>
+        </div>
+        <button class="ui  button" id="back">Back</button>
+        <button class="ui blue button" id="continue">Continue</button>
+    </section>
 </body>
 </html>  

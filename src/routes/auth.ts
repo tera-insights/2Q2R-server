@@ -34,6 +34,7 @@ export function authtenticate(req: express.Request, res: express.Response) {
         data = JSON.parse(req.body.clientData);
     } catch (e) {
         res.status(404).send("Invalid request");
+        return;
     }
 
     var cReq = <IRequest>pending.getByChallenge(data.challenge);
@@ -91,7 +92,6 @@ export function challenge(req: express.Request, res: express.Response) {
         return;
     }
 
-
     Keys.generateRequest(cReq.appID, keyID, false)
         .then((req: IRequest) => {
             req.userID = cReq.userID;
@@ -102,20 +102,21 @@ export function challenge(req: express.Request, res: express.Response) {
 
             // send a Firebase request if we can
             if (req.fcmToken) {
+                console.log("Sending Firebase request");
                 unirest.post("https://fcm.googleapis.com/fcm/send")
                     .headers({
                         "Authorization": "key=" + fbServerKey,
                         "Content-Type": "application/json"
                     })
                     .send({
-                        to: cReq.fcmToken,
+                        to: req.fcmToken,
                         data: {
                             authData: "A " + req.appId + " " + req.challenge + " " +
                             keyID + " " + req.counter
                         }
                     })
                     .end(function (response) {
-                        console.log("Firebase request: ", response.statusCode);
+                        console.log("Firebase request: ", response.statusCode, response.body);
                     });
             }
 
@@ -125,6 +126,8 @@ export function challenge(req: express.Request, res: express.Response) {
                 counter: req.counter,
                 appID: cReq.appID
             })
+        }, (err) => {
+            res.status(400).send(err);
         });
 }
 
@@ -132,6 +135,10 @@ export function challenge(req: express.Request, res: express.Response) {
 export function request(req: express.Request, res: express.Response) {
     var userID = req.body.userID;
     var appID = req.body.appID;
+
+    if (!userID || !appID){
+        res.status(400).send("Missing parameters.");
+    }
 
     var info = Apps.getInfo(appID);
 
@@ -162,6 +169,7 @@ export function iframe(req: express.Request, res: express.Response) {
 
     Keys.get(cReq.appID, cReq.userID)
         .then((keys) => {
+            console.log("Keys of ", cReq.appID, cReq.userID, keys);
             res.render('auth', {
                 layout: false,
                 data: {
