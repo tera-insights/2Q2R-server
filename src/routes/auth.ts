@@ -29,6 +29,18 @@ var fbServerKey = config.get("fbServerKey");
 
 // POST: /auth
 export function authtenticate(req: express.Request, res: express.Response) {
+    if (req.body.errorStatus) {
+        // we got an error. Resolve accordingly
+        var cReq = <IRequest>pending.getByChallenge(req.body.challenge);
+        if (cReq && req.body.errorMessage) {
+            pending.reject(cReq, req.body.errorStatus, req.body.errorMessage);
+            res.status(200).send("Authentication canceled");
+            return;
+        } else {
+            res.status(400).send("Incorrect message");
+        }
+    }
+
     var data: any = {};
     try {
         data = JSON.parse(req.body.clientData);
@@ -136,7 +148,7 @@ export function request(req: express.Request, res: express.Response) {
     var userID = req.body.userID;
     var appID = req.body.appID;
 
-    if (!userID || !appID){
+    if (!userID || !appID) {
         res.status(400).send("Missing parameters.");
     }
 

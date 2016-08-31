@@ -17,7 +17,7 @@ addState("2q2r-login", function (sel) {
         $("#qrcode", sel).empty();
         $("#qrcode", sel).qrcode({
             text: "A " + res.appID + " " + res.challenge + " " + res.keyID + " " + res.counter,
-            width: 160, height: 160
+            width: 192, height: 192
         });
 
         var disp = displayableChallenge(res.challenge);

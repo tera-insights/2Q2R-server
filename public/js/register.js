@@ -23,7 +23,7 @@ addState("2q2r-generate", function (sel) {
     $("#qrcode", sel).empty();
     $("#qrcode", sel).qrcode({
         text: "R " + data.challenge + " " + data.infoUrl + " " + data.userID,
-        width: 160, height: 160
+        width: 192, height: 192
     });
 
     var disp = displayableChallenge(data.challenge);
