@@ -1,16 +1,14 @@
 {! This template displayes info on key types !}
 <div id="keyInfo">
-    <div id="info">
-        <p> Please select the device type you plan to use. Once selected, 
-            details on the key type will be displayed. </p>
+    <div>
+        <p> Please select a device type. </p>
     </div>
-    <div id="2q2r-ki" class="hidden">
-        <p>To use 2Q2R keys you need to install the Android or iOS 2Q2R application.</p>
-    </div>  
 
-    <div id="u2f-ki" class="hidden">
-        <p>The FIDO U2F keys require the use of a FIDO U2F device 
-        and a browser plugin that allows the device to be accessed.
+    <div class="key-list-info-key hidden" id="2q2r-ki">
+        <p>2Q2R App keys use the <a href="#">2Q2R App</a> to authenicate. This method requires you to scan a QR Code with the 2Q2R App.</p>
+    </div>
+    <div class="key-list-info-key hidden" id="u2f-ki">
+        <p>FIDO U2F keys use a <a href="https://www.google.com/search?btnG=1&pws=0&q=fido+u2f+security+key">FIDO U2F security key</a> to authenticate. This method constitutes of inserting the key into a USB slot and pressing the button on the key.</p>
         <ul>
             <li> Yubico U2F </li>
             <li> Bla </li>

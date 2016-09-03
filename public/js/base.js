@@ -34,7 +34,7 @@ function makeKeyInfo(type) {
 /**
  * This function must be called once the page is loaded
  */
-function init() {
+function init(data) {
     // JQuery Shim to post JSON
     jQuery["postJSON"] = function (url, data, callback) {
         // shift arguments if data argument was omitted
@@ -54,7 +54,7 @@ function init() {
     };
 
     // Render the main template and attach it to the body
-    dust.render('main', {}, function (err, out) {
+    dust.render('main', data, function (err, out) {
         $('body').html(out);
         // TODO: hook up global actions
     })

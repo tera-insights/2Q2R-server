@@ -63,7 +63,9 @@ addState("2q2r-generate", "2q2rGenerate",
 
 
 $(document).ready(function () {
-    init();
+    init({
+        title: 'Device Registration'
+    });
 
     // start with key type selection
     selectState("keytype");
