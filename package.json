@@ -37,6 +37,8 @@
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.11.3",
+    "gulp-concat": "^2.6.0",
+    "gulp-dust": "^3.0.0",
     "gulp-shell": "^0.4.3",
     "gulp-typescript": "^2.9.0",
     "lodash": "^3.10.1",

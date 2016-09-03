@@ -19,6 +19,10 @@
     background-color: white;
 }
 
+.hidden {
+    display: none
+}
+
 section {
     display: none
 }

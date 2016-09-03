@@ -37,6 +37,22 @@ app.use(express.static('public'));
 // Pretty logs
 app.use(morgan('dev'));
 
+app.get('/test', (req: express.Request, res: express.Response) => {
+    var baseURL = "localhost:3040";
+    res.render('test', {
+        layout: false,
+        data: {
+            id: "jjjjjkalsdfjladsjf",
+            keyTypes: ["2q2r", "u2f"],
+            challenge: "lkjsdfljasd",
+            userID: "alin@",
+            appId: "aaaaaadjkfasjfd",
+            infoUrl: baseURL + "/v1/info/",
+            waitUrl: baseURL + "/v1/register/" + "djfkajdsf" + "/wait"
+        }
+    });
+});
+
 app.get('/v1/info/:appID', registerRoutes.info);
 app.get('/v1/info', registerRoutes.info);
 app.get('/v1/icon/:appID');// TODO: finish
@@ -44,25 +60,25 @@ app.get('/v1/icon/:appID');// TODO: finish
 
 // registration routes
 app.post('/v1/register/request', s2s.ensureServer, registerRoutes.request);
-app.get ('/v1/register/:id/wait', registerRoutes.wait);
+app.get('/v1/register/:id/wait', registerRoutes.wait);
 app.post('/v1/register', registerRoutes.register);
-app.get ('/register/:id', registerRoutes.iframe);
+app.get('/register/:id', registerRoutes.iframe);
 
 // TODO: finish this
-app.get ('/register/:id');
+app.get('/register/:id');
 
 // authentication routes
 app.post('/v1/auth/request', authRoutes.request); // TODO: finish
-app.get ('/v1/auth/:id/wait', authRoutes.wait);
+app.get('/v1/auth/:id/wait', authRoutes.wait);
 app.post('/v1/auth/:id/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authtenticate);
-app.get ('/auth/:id', authRoutes.iframe);
+app.get('/auth/:id', authRoutes.iframe);
 
 // key routes
 app.post('/v1/key/request', s2s.ensureServer, keys.request);
-app.get ('/v1/key/:id/wait', keys.wait);
+app.get('/v1/key/:id/wait', keys.wait);
 app.post('/v1/key/:id/remove', s2s.ensureServer, keys.deleteKey);
-app.get ('/keys/delete/:id', keys.iframe);
+app.get('/keys/delete/:id', keys.iframe);
 app.post('/v1/keys/delete/:keyID/device', keys.deleteDevKey);
 
 // user routes
