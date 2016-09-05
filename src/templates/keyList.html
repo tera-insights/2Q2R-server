@@ -1,0 +1,15 @@
+{! This template lists the key types available !}
+<div class="ui form" id="form-kt">
+    <div class="grouped fields">
+        <label>Select the key.</label>
+        {#keys}
+        <div class="field">
+            <div class="ui radio checkbox" id="{$idx}-cb">
+                <input type="radio" value="{$idx}" name="keyradio">
+                <label><b>{name}</b> [{type}]</label>
+            </div>
+        </div>
+        {/keys}
+    </div>
+    <button class="ui blue button" id="continue">Continue</button>
+</div>

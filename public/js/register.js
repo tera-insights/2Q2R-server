@@ -20,7 +20,7 @@ addState("keytype", "registerKeyList", function () {
     )
 });
 
-addState("2q2r-generate", "2q2rGenerate",
+addState("2q2r-generate", "2q2rRegister",
     function () {
         return {}
     },

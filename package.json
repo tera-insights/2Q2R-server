@@ -33,6 +33,7 @@
     "body-parser": "^1.14.1",
     "config": "^1.21.0",
     "connect-mongo": "^1.2.1",
+    "dustjs-linkedin": "^2.7.3",
     "ejs": "^2.5.1",
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",

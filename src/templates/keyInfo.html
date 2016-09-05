@@ -1,0 +1,30 @@
+{! This template displayes info and instructions on keys!}
+<div id="keyInfo">
+    <div>
+        <p> 
+            Please select the key to use for authentication. 
+            Make sure you have access to the authentication device you select.
+        </p> 
+    </div>
+    {#keys}
+        <div class="key-list-info-key hidden" id="{$idx}-ki">
+            {@select key=type}
+                {@any}
+                    <div class="ui radio checkbox" id="makedefault">
+                        <input type="radio" value="{$idx}" name="keyradio">
+                        <label>Set as default and login fast</label>
+                    </div>                  
+                {/any}
+                {@none}
+                    <h1>This key type is not implemented </h1>
+                {/none}
+                {@eq value="2q2r"}
+                    <p> 2Q2R App Key</p>
+                {/eq}
+                {@eq value="u2f"}
+                    <p> U2F Key </p>
+                {/eq}
+            {/select}
+        </div>
+    {/keys}
+</div>

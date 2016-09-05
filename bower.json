@@ -28,6 +28,7 @@
     "jquery-qrcode": "*",
     "semantic": "^2.2.2",
     "u2f-api": "^0.4.1",
-    "dustjs-linkedin": "^2.7.3"
+    "dustjs-linkedin": "^2.7.3",
+    "dustjs-helpers": "dustjs-linkedin-helpers#^1.7.3"
   }
 }

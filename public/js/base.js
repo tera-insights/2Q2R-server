@@ -91,14 +91,12 @@ function semanticInit() {
 function selectState(state) {
     var stateSel = $('#state');
 
-    console.log("Selected: ", state);
     var stateInfo = states[state];
     if (!stateInfo)
         return;
     var data = (stateInfo.init) ? stateInfo.init() : {};
     if (stateInfo.template)
         dust.render(stateInfo.template, data, function (err, out) {
-            console.log("Dust: ", err, out);
             if (err)
                 stateSel.html("<h1>Error: " + JSON.stringify(err) + " </h1>");
             else {
