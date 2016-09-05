@@ -1,39 +1,31 @@
 /* overall styles for iframe */
 
 html {
-    background-color: #E5E8E7;
+    /* make it as tall as the iframe */
+    height: 100%;
+    background-color: #FCFCFC;
 }
 
 body {
-    background-color: #E5E8E7 !important;
+    /* inherit from html */
+    height: inherit;
+    background-color: #FCFCFC !important;
 }
 
-#challenge-big {
-    font-size: 24px;
-    width: 100%;
-    text-align: center
+ul li {
+    /* disabled by materialize */
+    list-style-type: disc;
+    list-style-position: inside;
 }
 
-#challenge-small {
-    font-size: 12px;
-    width: 100%;
-    text-align: center
+label {
+    color: rgba(0,0,0,0.87);
 }
 
-#qrcode {
-    padding: 10px;
-}
 
-.qr-container {
-    width: 222px;
-    background-color: white;
-}
+/* jquery requires something to be hidden to call .show() */
 
 .hidden {
-    display: none;
-}
-
-section {
     display: none;
 }
 
@@ -45,6 +37,8 @@ section {
     width: 100%;
     display: flex;
     align-items: center;
+    /* a step above the rest */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .main-toolbar-brand {
@@ -59,11 +53,13 @@ section {
     margin-right: 1rem;
 }
 
+
 /* the thing that contains all of the states */
 
 .state-container {
-    height: calc(100% - 4rem - 7px);
+    /* total height - toolbar - top + bottom margins */
+    height: calc(100% - 4rem - 14px);
     width: calc(100% - 14px);
-    margin: 0 7px 7px 7px;
+    margin: 7px;
     display: flex;
 }

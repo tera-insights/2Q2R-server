@@ -1,32 +1,52 @@
-var keys = []; // list of keys to delete
+var keyIndex = 0; // the key selected
 
-addState("keyselect", function (sel) {
-    $("#continue", sel).click(
-        function (event) {
-            keys = $('input[name=keycheckbox]:checked', '#form-kt').val();
+addState("keyselect", "deleteKeyList",
+    function() {
+        return {
+            keys: data.keys
+        };
+    },
+    function(sel) {
+        $("#continue", sel).click(
+            function(event) {
+                keyIndex = $('input[name=keyradio]:checked', '#form-kt').val();
 
-            console.log("Keys: ", keys);
+                console.log("Key: ", keyIndex, data.keys[keyIndex]);
 
-            selectState("deleted");
+                $.postJSON(data.deleteUrl, {
+                    keyID: data.keys[keyIndex].keyID,
+                    appID: data.appId
+                }).always(function(jqXHR, textStatus) {
+                    if (jqXHR.status === 200) {
+                        selectState("deleted");
+                    }
+
+                    else {
+                        selectState("error");
+                    }
+
+                });
+
+            }
+        )
+    });
+
+addState("deleted", "deleteMessage",
+    function() {
+        return {
+            key: data.keys[keyIndex]
         }
-    )
-});
+    },
+    function(event) {
+        keyIndex = $('input[name=keyradio]:checked', '#form-kt').val();
+        var keyType = data.keys[keyIndex].type;
+        selectState(keyType + "-login");
+    })
+$(document).ready(function() {
+    init({
+        title: 'Delete Device'
+    });
 
-$(document).ready(function () {
-    init();
-
-    for (var i = 0; i < data.keys.length; i++) {
-        var name = data.keys[i].name;
-        var type = data.keys[i].type;
-        $("#keylist").append(
-            '<div class="field">' +
-            '<div class="ui checkbox">' +
-            '<input type="checkbox" value="' + i + '" name="keycheckbox">' +
-            '<label><b>' + name + '</b> [' + type + ']</label>' +
-            '</div>' +
-            '</div>'
-        );
-    }
     // start with key type selection
     selectState("keyselect");
 

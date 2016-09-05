@@ -77,7 +77,7 @@ app.get('/auth/:id', authRoutes.iframe);
 // key routes
 app.post('/v1/key/request', s2s.ensureServer, keys.request);
 app.get('/v1/key/:id/wait', keys.wait);
-app.post('/v1/key/:id/remove', s2s.ensureServer, keys.deleteKey);
+app.post('/v1/key/:id/remove', keys.deleteKey);
 app.get('/keys/delete/:id', keys.iframe);
 app.post('/v1/keys/delete/:keyID/device', keys.deleteDevKey);
 

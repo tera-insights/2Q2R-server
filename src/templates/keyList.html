@@ -1,15 +1,11 @@
 {! This template lists the key types available !}
-<div class="ui form" id="form-kt">
-    <div class="grouped fields">
-        <label>Select the key.</label>
-        {#keys}
-        <div class="field">
-            <div class="ui radio checkbox" id="{$idx}-cb">
-                <input type="radio" value="{$idx}" name="keyradio">
-                <label><b>{name}</b> [{type}]</label>
-            </div>
-        </div>
-        {/keys}
-    </div>
-    <button class="ui blue button" id="continue">Continue</button>
-</div>
+<form id="form-kt">
+    <h6>Select the key.</h6>
+    {#keys}
+    <p id="{$idx}-cb">
+        <input class="with-gap" type="radio" value="{$idx}" id="{$idx}-i" name="keyradio">
+        <label for="{$idx}-i"><b>{name}</b> [{type}]</label>
+    </p>
+    {/keys}
+    <a class="waves-effect waves-light btn" id="continue">Continue</a>
+</form>

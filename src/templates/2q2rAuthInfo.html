@@ -1,17 +1,26 @@
 <div class="info">
-    <h4> Steps to authenticate: </h4>
+    <h6><b> Steps to authenticate: </b></h6>
     <ol>
-        <li> Check the phone for a push notification </li>
-        <li> Alternatively, scan QR code with 2Q2R App </li>
-        <li> Verify that the challenge is the same </li>
-        <li> Press OKAY button on the phone </li>
-        <li> Different challenge? Notify administator </li>
+        <li> Check your phone for a push notification or scan the QR code with the 2Q2R App. </li>
+        <li> Verify that the eight-digit number below the qr code is the same as the one on the app; doing so will make the chance of login hijacking much lower. </li>
+        <li> Press the green OKAY button on your phone. </li>
+        <li> Different code? Notify your administator. </li>
     </ol>
-
-    <p> <b>Why check the challenge?</b> <br>
-    Chance of login highjacking reduced to
-        <b>1 in 281 trillions</b> for first 8 characters and <b>1 in 374 trillion trillion trillion trillions</b> for all
-        28 characters.
-    </p>
-    <button class="ui  button" id="back">Back</button>
+    <div class="qr-actions">
+        <a class="waves-effect waves-light btn" id="back">Back</a>
+        <div class="preloader-wrapper small active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        <p>Waiting for scan...</p>
+    </div>
 </div>

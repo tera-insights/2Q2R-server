@@ -12,10 +12,16 @@
     display: flex;
 }
 
+
+/* the info paragraphs */
+
 .key-list-info {
     width: 100%;
     margin-right: 13px;
 }
+
+
+/* container for key-list-info-key */
 
 .key-list-keys {
     width: 55%;
@@ -25,25 +31,73 @@
 
 .key-list-info-key {}
 
+
+/* divider for the key-list, in the middle */
+
 .key-list-divider {
     height: 100%;
     width: 1px;
-    background-color: black;
+    background-color: rgba(0,0,0,0.12);
     margin: 0 1rem 0 1rem;
 }
 
-/* qr code section of the page */
-.content {
-    width: 40%;
+
+/* contains the qrcode and the challenge- ids */
+
+.qr-container {
+    width: 222px;
+    background-color: white;
+    text-align: center;
 }
 
-/* qr code container */
+
+/* qrcode is set to exist in this */
+
 #qrcode {
-    display: flex;
-    justify-content: center;
+    /* pad it out... */
+    padding: 10px;
+    /* ...but remove the bottom; otherwise, height gets screwed up */
+    padding-bottom: 0;
 }
+
+
+/* the big text under the qrcode */
+
+#challenge-big {
+    font-size: 24px;
+    width: 100%;
+    text-align: center;
+    color: #2962FF;
+}
+
+
+/* the small text */
+
+#challenge-small {
+    font-size: 12px;
+    width: 100%;
+    text-align: center
+}
+
+
+/* the actions under qr instructions */
+
+.qr-actions {
+    display: flex;
+    align-items: center;
+}
+
+.qr-actions .preloader-wrapper {
+    margin-left: 1rem;
+}
+
+.qr-actions > p {
+    margin-left: 0.5rem;
+}
+
 
 /* info section */
+
 .info {
     width: 60%;
 }

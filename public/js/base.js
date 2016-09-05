@@ -77,11 +77,7 @@ function addState(name, template, init, actions) {
  * that semantic things come "alive".
  */
 function semanticInit() {
-    // initialize checkboxes
-    $('.ui.checkbox').checkbox();
-
-    // initialize dropdowns
-    $('.ui.dropdown').dropdown();
+    // rename
 }
 
 /**

@@ -79,7 +79,7 @@ export function iframe(req: express.Request, res: express.Response) {
                     userID: cReq.userID,
                     appId: cReq.appID,
                     waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
-                    deleteUrl: info.baseURL + "/v1/keys/delete/" + id
+                    deleteUrl: info.baseURL + "/v1/key/" +id + "/remove"
                 }
             });
 
@@ -100,8 +100,8 @@ export function getKeys(req: express.Request, res: express.Response) {
 }
 
 export function deleteKey(req: express.Request, res: express.Response) {
-    var keyID = req.params.keyID;
-    var appID = req.params.appID;
+    var keyID = req.body.keyID;
+    var appID = req.body.appID;
     Keys.delete(appID, keyID).then(
         () => {
             res.status(200).send("Key " + keyID + " deleted.");
