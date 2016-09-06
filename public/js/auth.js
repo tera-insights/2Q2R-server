@@ -36,6 +36,11 @@ addState("2q2r-login", "2q2rAuth",
                 $('#modal-challenge').openModal();
             }
         )
+        $("#trigger-notify").click(
+            function(event){
+                $('#modal-notify').openModal();
+            }
+        )
 
         $.postJSON(data.challengeUrl, {
             keyID: data.keys[keyIndex].keyID

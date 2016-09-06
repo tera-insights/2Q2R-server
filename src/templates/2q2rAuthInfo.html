@@ -3,28 +3,47 @@
     <ol>
         <li> Check your phone for a push notification. </li>
         <li> Alternatively, scan the QR code with the 2Q2R App. </li>
-        <li> Check that the blue characters below the QR code match
-             the ones displayed by the app. 
-             <a id="trigger-challenge" class="modal-trigger" href="#modal-challenge">Why?</a>
-             </li>
+        <li> Check that the blue characters below the QR code match the ones displayed by the app.
+            <a id="trigger-challenge" class="modal-trigger" href="#modal-challenge">Why?</a>
+        </li>
         <li> Press the green OKAY button on your phone. </li>
-        <li> Different code? Notify your administator. <a>Why?</a></li>
+        <li> Different code? Notify your administator.
+            <a id="trigger-notify" class="modal-trigger" href="#modal-notify">Why?</a></li>
     </ol>
 
-  <!-- Modal Structure -->
-  <div id="modal-challenge" class="modal">
-    <div class="modal-content">
-      <h4>Why check the challenges?</h4>
-      <p>The challenge is the set of characters displayed below the QR
-          code and in the dialog displayed in the phone app. The challenge is 
-          
-      </p>
+    <!-- Modal Structure -->
+    <div id="modal-challenge" class="modal">
+        <div class="modal-content">
+            <h4>Why check the challenges?</h4>
+            <p> In the process of authenticating the user, the 2Q2R server <b>issues a challenge</b> that has to be included
+                in the digitally signed message from the device. Part of the challenge is displayed in the form of 8 large
+                font characters and 20 small font characters.</p>
+
+            <p> By checking the first 8 characters, you reduce the chance of login hijacking to <b>1 in 281 trillions</b>.
+            </p>
+
+            <p> Should you check all displayed characters, chances are reduced to
+                <b> 1 in 374 trillion trillion trillion trillions</b>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+        </div>
     </div>
-    <div class="modal-footer">
-      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+
+    <div id="modal-notify" class="modal">
+        <div class="modal-content">
+            <h4>Why notify the admin?</h4>
+           
+            <p> The 2Q2R server carefully manages the challenges. A discrepancy in the displayed challenge, particularly
+                a small one, indicates a possible security attack. </p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+        </div>
     </div>
-  </div>
-          
+
+
     <div class="qr-actions">
         <a class="waves-effect waves-light btn" id="back">Back</a>
         <div class="preloader-wrapper small active">
