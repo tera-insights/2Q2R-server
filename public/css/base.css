@@ -132,7 +132,7 @@ label {
 /* the small text */
 
 #challenge-small {
-    font-size: 12px;
+    font-size: 11px;
     width: 100%;
     text-align: center
 }
@@ -146,7 +146,7 @@ label {
 }
 
 .qr-actions .preloader-wrapper {
-    margin-left: 1rem;
+    margin-left: auto;
 }
 
 .qr-actions > p {

@@ -25,6 +25,17 @@ addState("2q2r-generate", "2q2rRegister",
         return {}
     },
     function (sel) {
+        $("#trigger-challenge").click(
+            function(event){
+                $('#modal-challenge').openModal();
+            }
+        )
+        $("#trigger-notify").click(
+            function(event){
+                $('#modal-notify').openModal();
+            }
+        )
+
         $("#continue", sel).click(
             function (event) {
 

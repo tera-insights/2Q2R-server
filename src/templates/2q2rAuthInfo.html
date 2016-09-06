@@ -10,18 +10,13 @@
         <li> Different code? Notify your administator.
             <a id="trigger-notify" class="modal-trigger" href="#modal-notify">Why?</a></li>
     </ol>
-
-    <!-- Modal Structure -->
+    <!-- The first 'why' displayed next to step 3 -->
     <div id="modal-challenge" class="modal">
         <div class="modal-content">
             <h4>Why check the challenges?</h4>
-            <p> In the process of authenticating the user, the 2Q2R server <b>issues a challenge</b> that has to be included
-                in the digitally signed message from the device. Part of the challenge is displayed in the form of 8 large
-                font characters and 20 small font characters.</p>
-
+            <p> In the process of authenticating the user, the 2Q2R server <b>issues a challenge</b> that has to be included in the digitally signed message from the device. Part of the challenge is displayed in the form of 8 large font characters and 20 small font characters.</p>
             <p> By checking the first 8 characters, you reduce the chance of login hijacking to <b>1 in 281 trillions</b>.
             </p>
-
             <p> Should you check all displayed characters, chances are reduced to
                 <b> 1 in 374 trillion trillion trillion trillions</b>
             </p>
@@ -30,22 +25,20 @@
             <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
         </div>
     </div>
-
+    <!-- The second one on the last step -->
     <div id="modal-notify" class="modal">
         <div class="modal-content">
             <h4>Why notify the admin?</h4>
-           
-            <p> The 2Q2R server carefully manages the challenges. A discrepancy in the displayed challenge, particularly
-                a small one, indicates a possible security attack. </p>
+            <p> The 2Q2R server carefully manages the challenges. A discrepancy in the displayed challenge, particularly a small one, indicates a possible security attack. </p>
         </div>
         <div class="modal-footer">
             <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
         </div>
     </div>
-
-
+    <!-- Actions under the instructions -->
     <div class="qr-actions">
         <a class="waves-effect waves-light btn" id="back">Back</a>
+        <!-- never goes anywhere, just lets the user know -->
         <div class="preloader-wrapper small active">
             <div class="spinner-layer spinner-blue-only">
                 <div class="circle-clipper left">
