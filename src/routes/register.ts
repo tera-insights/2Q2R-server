@@ -114,8 +114,10 @@ export function iframe(req: express.Request, res: express.Response) {
         return;
     }
 
-    res.render('register', {
+    res.render('all', {
         layout: false,
+        name: "Registration",
+        id: "register",
         data: {
             id: id,
             keyTypes: ["2q2r", "u2f"],
@@ -123,6 +125,7 @@ export function iframe(req: express.Request, res: express.Response) {
             userID: cReq.userID,
             appId: cReq.appId,
             infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
+            registerUrl: info.baseURL+ "/register", 
             waitUrl: info.baseURL + "/v1/register/" + id + "/wait"
         }
     });

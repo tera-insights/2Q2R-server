@@ -71,8 +71,10 @@ export function iframe(req: express.Request, res: express.Response) {
     Keys.get(cReq.appID, cReq.userID)
         .then((keys) => {
             console.log("Keys of ", cReq.appID, cReq.userID, keys);
-            res.render('delete', {
+            res.render('all', {
                 layout: false,
+                name: "Delete",
+                id: "delete",
                 data: {
                     id: id,
                     keys: keys,

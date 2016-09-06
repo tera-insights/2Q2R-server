@@ -1,11 +1,30 @@
 <div class="info">
     <h6><b> Steps to authenticate: </b></h6>
     <ol>
-        <li> Check your phone for a push notification or scan the QR code with the 2Q2R App. </li>
-        <li> Verify that the eight-digit number below the qr code is the same as the one on the app; doing so will make the chance of login hijacking much lower. </li>
+        <li> Check your phone for a push notification. </li>
+        <li> Alternatively, scan the QR code with the 2Q2R App. </li>
+        <li> Check that the blue characters below the QR code match
+             the ones displayed by the app. 
+             <a id="trigger-challenge" class="modal-trigger" href="#modal-challenge">Why?</a>
+             </li>
         <li> Press the green OKAY button on your phone. </li>
-        <li> Different code? Notify your administator. </li>
+        <li> Different code? Notify your administator. <a>Why?</a></li>
     </ol>
+
+  <!-- Modal Structure -->
+  <div id="modal-challenge" class="modal">
+    <div class="modal-content">
+      <h4>Why check the challenges?</h4>
+      <p>The challenge is the set of characters displayed below the QR
+          code and in the dialog displayed in the phone app. The challenge is 
+          
+      </p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
+          
     <div class="qr-actions">
         <a class="waves-effect waves-light btn" id="back">Back</a>
         <div class="preloader-wrapper small active">

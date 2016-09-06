@@ -182,8 +182,10 @@ export function iframe(req: express.Request, res: express.Response) {
     Keys.get(cReq.appID, cReq.userID)
         .then((keys) => {
             console.log("Keys of ", cReq.appID, cReq.userID, keys);
-            res.render('auth', {
+            res.render('all', {
                 layout: false,
+                name: "Authentication",
+                id: "auth",
                 data: {
                     id: id,
                     counter: cReq.counter,

@@ -37,22 +37,6 @@ app.use(express.static('public'));
 // Pretty logs
 app.use(morgan('dev'));
 
-app.get('/test', (req: express.Request, res: express.Response) => {
-    var baseURL = "localhost:3040";
-    res.render('test', {
-        layout: false,
-        data: {
-            id: "jjjjjkalsdfjladsjf",
-            keyTypes: ["2q2r", "u2f"],
-            challenge: "lkjsdfljasd",
-            userID: "alin@",
-            appId: "aaaaaadjkfasjfd",
-            infoUrl: baseURL + "/v1/info/",
-            waitUrl: baseURL + "/v1/register/" + "djfkajdsf" + "/wait"
-        }
-    });
-});
-
 app.get('/v1/info/:appID', registerRoutes.info);
 app.get('/v1/info', registerRoutes.info);
 app.get('/v1/icon/:appID');// TODO: finish

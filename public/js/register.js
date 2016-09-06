@@ -51,16 +51,62 @@ addState("2q2r-generate", "2q2rRegister",
                 $("#qrcode", sel).append("<img src=\"/img/check.png\" alt=\"Registration\n" +
                     "Successful!\" id=\"successImage\" style=\"width: 174px; height: 174px;\">");
             }
-        })
-            .fail(function (jqXHR, textStatus) {
-                $("#qrcode", sel).empty();
-                $("#qrcode", sel).append("<img src=\"/img/timeout.png\" alt=\"Registration\n" +
-                    "timed out.\" id=\"timeoutImage\" style=\"width: 174px; height: 174px;\">");
-
-            });
+        }).fail(function (jqXHR, textStatus) {
+            $("#qrcode", sel).empty();
+            $("#qrcode", sel).append("<img src=\"/img/timeout.png\" alt=\"Registration\n" +
+                "timed out.\" id=\"timeoutImage\" style=\"width: 174px; height: 174px;\">");
+        });
 
     });
 
+
+addState('u2f-generate', 'u2fRegister',
+    function () {
+        return {}
+    }, function (sel) {
+ var request = {"challenge": "rtUtyJmynBx3cREM_fMs4rK-4BnL6HS4c0ncqB3bYe4", "version": "U2F_V2", "appId": "http://192.168.1.139:3040"};
+  console.log("Register: ", request);
+  var appId = request.appId;
+  var registerRequests = [{version: request.version, challenge: request.challenge}];
+  $('#promptModal').modal('show');
+  console.log(appId, registerRequests);
+  u2f.register(appId, registerRequests, [], function(data) {
+    console.log("Register callback", data);
+    $('#promptModal').modal('hide');
+    $('#bind-data').val(JSON.stringify(data));
+    $('#bind-form').submit();
+  });
+
+
+       /* var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
+        console.log("Sending U2F registratoin");
+        var rep = u2f.register(data.appId, registerRequests, [], function (reply) {
+            console.log("Registration data: ", reply);
+            if (reply.errorCode){
+                // regisration failed
+                alert("Registration failed: "+reply.errorCode);
+                return;
+            }
+
+            // add more info to reply to get it ready to give to 2Q2R server
+            reply.appID = data.appId;
+            reply.challenge = data.challenge;
+            reply.deviceName = "YubiKey";
+            reply.type = "u2f";
+            $.postJSON(data.registerUrl, reply,
+                function (res) {
+                    if (res.successful)
+                        console.log("Succesful: ", res);
+                    else
+                        console.log("Error: ", res);
+                }).fail(function (jqXHR, textStatus) {
+                    console.log("Error: ", res);
+                });
+        });
+        console.log("Reply: ", rep);
+        */
+    }
+);
 
 $(document).ready(function () {
     init({
