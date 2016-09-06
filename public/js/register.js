@@ -64,23 +64,9 @@ addState('u2f-generate', 'u2fRegister',
     function () {
         return {}
     }, function (sel) {
- var request = {"challenge": "rtUtyJmynBx3cREM_fMs4rK-4BnL6HS4c0ncqB3bYe4", "version": "U2F_V2", "appId": "http://192.168.1.139:3040"};
-  console.log("Register: ", request);
-  var appId = request.appId;
-  var registerRequests = [{version: request.version, challenge: request.challenge}];
-  $('#promptModal').modal('show');
-  console.log(appId, registerRequests);
-  u2f.register(appId, registerRequests, [], function(data) {
-    console.log("Register callback", data);
-    $('#promptModal').modal('hide');
-    $('#bind-data').val(JSON.stringify(data));
-    $('#bind-form').submit();
-  });
-
-
-       /* var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
+        var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
         console.log("Sending U2F registratoin");
-        var rep = u2f.register(data.appId, registerRequests, [], function (reply) {
+        u2f.register(data.baseUrl, registerRequests, [], function (reply) {
             console.log("Registration data: ", reply);
             if (reply.errorCode){
                 // regisration failed
@@ -100,11 +86,9 @@ addState('u2f-generate', 'u2fRegister',
                     else
                         console.log("Error: ", res);
                 }).fail(function (jqXHR, textStatus) {
-                    console.log("Error: ", res);
+                    console.log("Error: ", jqXHR.status);
                 });
         });
-        console.log("Reply: ", rep);
-        */
     }
 );
 

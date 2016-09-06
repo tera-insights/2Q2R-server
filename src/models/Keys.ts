@@ -68,13 +68,13 @@ export class KeysSchema {
      * @param {u2f.IRegisterData} registerData Registration data from device
      * @returns
      */
-    register(appid: string, userid: string, name: string, type: string, fcmToken: string,
+    register(appid: string, userid: string, name: string, type: string,
+        fcmToken: string,
         request: u2f.IRequest, registerData: u2f.IRegisterData) {
         return new Promise((resolve, reject) => {
             // first check the registration
-            var clientData = new Buffer(registerData.clientData).toString('base64');
             var res = u2f.checkRegistration(request, {
-                clientData: clientData,
+                clientData: registerData.clientData,
                 registrationData: registerData.registrationData
             });
             if (res.successful) {

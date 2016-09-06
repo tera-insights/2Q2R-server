@@ -36,7 +36,16 @@ export function info(req: express.Request, res: express.Response) {
  * Device registration route. 
  */
 export function register(req: express.Request, res: express.Response) {
-    var data = JSON.parse(req.body.clientData);
+    // console.log("Registration: ", req.body);
+    var data: any;
+
+    if (req.body.clientData[0] == "{") { // phone TODO: change phone
+        data = JSON.parse(req.body.clientData);
+        req.body.clientData = new Buffer(req.body.clientData).toString('base64');
+    } else {
+        data = JSON.parse(new Buffer(req.body.clientData, 'base64').toString('utf8'));
+        console.log("U2F Data:", data, req.body.clientData);
+    }
     var appID = data.appID;
 
     // make sure we have this challenge pending
@@ -56,6 +65,9 @@ export function register(req: express.Request, res: express.Response) {
     }
 
     console.log("Start register:", data, cReq, req.body.deviceName);
+
+    if (req.body.type == "u2f")
+        cReq.appId = data.origin; // This is clearly a hack.
 
     Keys.register(cReq.appId, cReq.userID, req.body.deviceName,
         req.body.type || "2q2r", req.body.fcmToken,
@@ -107,6 +119,12 @@ export function wait(req: express.Request, res: express.Response) {
 export function iframe(req: express.Request, res: express.Response) {
     var id = req.params.id;
     var cReq = <IRequest>pending.getByID(id);
+
+    if (!cReq) {
+        res.status(404).send("The request expired or is invalid.");
+        return;
+    }
+
     var info = Apps.getInfo(cReq.appId);
 
     if (!cReq || !info) {
@@ -124,8 +142,9 @@ export function iframe(req: express.Request, res: express.Response) {
             challenge: cReq.challenge,
             userID: cReq.userID,
             appId: cReq.appId,
+            baseUrl: info.baseURL,
             infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
-            registerUrl: info.baseURL+ "/register", 
+            registerUrl: info.baseURL + "/v1/register",
             waitUrl: info.baseURL + "/v1/register/" + id + "/wait"
         }
     });
