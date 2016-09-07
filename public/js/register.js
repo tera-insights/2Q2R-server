@@ -26,12 +26,12 @@ addState("2q2r-generate", "2q2rRegister",
     },
     function (sel) {
         $("#trigger-challenge").click(
-            function(event){
+            function (event) {
                 $('#modal-challenge').openModal();
             }
         )
         $("#trigger-notify").click(
-            function(event){
+            function (event) {
                 $('#modal-notify').openModal();
             }
         )
@@ -73,15 +73,18 @@ addState("2q2r-generate", "2q2rRegister",
 
 addState('u2f-generate', 'u2fRegister',
     function () {
-        return {}
+        return {
+            windowUrl: window.location
+        }
     }, function (sel) {
         var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
         console.log("Sending U2F registratoin");
         u2f.register(data.baseUrl, registerRequests, [], function (reply) {
             console.log("Registration data: ", reply);
-            if (reply.errorCode){
-                // regisration failed
-                alert("Registration failed: "+reply.errorCode);
+
+            if (reply.errorCode) {
+                $("#u2f-window", sel).show();
+                $("#u2f-msg").hide();
                 return;
             }
 

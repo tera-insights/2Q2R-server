@@ -105,11 +105,10 @@ export class KeysSchema {
      */
     checkSignature(request: u2f.IRequest, signature: u2f.ISignatureData, counter?: number) {
         // change client data to match what u2f expects
-        var clientData = new Buffer(signature.clientData).toString('base64');
         return this.schema.findByPrimary(request.keyHandle).then(
             (key: IKeys.IKeyInstance) => {
                 var res = u2f.checkSignature(request, {
-                    clientData: clientData,
+                    clientData: signature.clientData,
                     signatureData: signature.signatureData
                 }, key.pubKey);
                 if (res.successful) {

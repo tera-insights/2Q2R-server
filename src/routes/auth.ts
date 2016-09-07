@@ -42,12 +42,15 @@ export function authtenticate(req: express.Request, res: express.Response) {
     }
 
     var data: any = {};
-    try {
+    if (req.body.clientData[0] == "{") { // phone TODO: change phone
         data = JSON.parse(req.body.clientData);
-    } catch (e) {
-        res.status(404).send("Invalid request");
-        return;
+        req.body.clientData = new Buffer(req.body.clientData).toString('base64');
+    } else {
+        data = JSON.parse(new Buffer(req.body.clientData, 'base64').toString('utf8'));
+        console.log("U2F Data:", data, req.body.clientData);
     }
+
+    console.log("Sign data: ", data);
 
     var cReq = <IRequest>pending.getByChallenge(data.challenge);
 
@@ -67,6 +70,9 @@ export function authtenticate(req: express.Request, res: express.Response) {
     }
 
     console.log("Start login:", data, cReq);
+
+    if (cReq, req.body.type == "u2f")
+        cReq.appId = data.origin; // This is clearly a hack.
 
     Keys.checkSignature(cReq, <u2f.ISignatureData>req.body, cReq.counter)
         .then((msg: string) => {
@@ -194,6 +200,7 @@ export function iframe(req: express.Request, res: express.Response) {
                     userID: cReq.userID,
                     appId: cReq.appId,
                     baseUrl: info.baseURL,
+                    authUrl: info.baseURL + "/v1/auth",
                     infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
                     waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
                     challengeUrl: info.baseURL + "/v1/auth/" + id + "/challenge",

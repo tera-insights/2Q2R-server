@@ -1,3 +1,15 @@
 {! Template to display registration for U2F devices !}
 
-<p> Insert the U2F device </p>
+<div id="u2f-msg">
+    <p> Insert the U2F device  and the press the button.</p>
+</div>
+<div id="u2f-window" class="hidden">
+    <p> It seems that security restrictions prevent the iframe to communicate 
+        with the FIDO U2F device. Please click the button below to open this
+        dialog in a new window. </p>
+
+    <p> Make sure you grant permission to </p>
+
+     <a class="waves-effect waves-light btn" onclick="window.open('{windowUrl}')">Open in new window</a>
+        
+</div>

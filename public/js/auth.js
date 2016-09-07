@@ -77,37 +77,45 @@ addState("2q2r-login", "2q2rAuth",
 addState("u2f-login", "u2fAuth",
     function () {
         return {
-            key: data.keys[keyIndex]
+            key: data.keys[keyIndex],
+            windowUrl: window.location
         }
     }, function (sel) {
         console.log("Key: ", data.keys[keyIndex].keyID);
-        u2f.sign(data.baseUrl, data.challenge, [{
-            version: "U2F_V2",
-            keyHandle: data.keys[keyIndex].keyID
-        }], function (reply) {
-            console.log("Login data: ", reply, data);
-            if (reply.errorCode) {
-                // login failed
-                alert("Login failed: " + reply.errorCode);
-                return;
-            }
+        $.postJSON(data.challengeUrl, {
+            keyID: data.keys[keyIndex].keyID
+        }, function (res) {
+            u2f.sign(data.baseUrl, res.challenge, [{
+                version: "U2F_V2",
+                keyHandle: res.keyID,
+                sessionId: res.counter,
+            }], function (reply) {
+                console.log("Login data: ", reply, data);
+                if(reply.errorCode == 2){
+                    $("#u2f-window", sel).show();
+                    $("#u2f-msg").hide();
+                    return;
+                }
+                if (reply.errorCode) {
+                    // login failed
+                    alert("Login failed: " + reply.errorCode);
+                    return;
+                }
 
-            // add more info to reply to get it ready to give to 2Q2R server
-            reply.appID = data.appId;
-            reply.challenge = data.challenge;
-            reply.deviceName = "YubiKey";
-            reply.type = "u2f";
-            /* $.postJSON(data.registerUrl, reply,
-                function (res) {
-                    if (res.successful)
-                        console.log("Succesful: ", res);
-                    else
-                        console.log("Error: ", res);
-                }).fail(function (jqXHR, textStatus) {
-                    console.log("Error: ", jqXHR.status);
-                });
-            */
-        });
+                reply.type = "u2f";
+
+                // add more info to reply to get it ready to give to 2Q2R server
+                $.postJSON(data.authUrl, reply,
+                    function (res) {
+                        if (res.successful)
+                            console.log("Succesful: ", res);
+                        else
+                            console.log("Error: ", res);
+                    }).fail(function (jqXHR, textStatus) {
+                        console.log("Error: ", jqXHR.status);
+                    });
+            });
+        })
     }
 );
 
