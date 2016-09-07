@@ -77,6 +77,7 @@ export class KeysSchema {
                 clientData: registerData.clientData,
                 registrationData: registerData.registrationData
             });
+            console.log("Regiter: ", res);
             if (res.successful) {
                 resolve(this.schema.create({
                     keyID: res.keyHandle,

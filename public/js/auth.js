@@ -32,12 +32,12 @@ addState("2q2r-login", "2q2rAuth",
         }
     }, function (sel) {
         $("#trigger-challenge").click(
-            function(event){
+            function (event) {
                 $('#modal-challenge').openModal();
             }
         )
         $("#trigger-notify").click(
-            function(event){
+            function (event) {
                 $('#modal-notify').openModal();
             }
         )
@@ -73,6 +73,43 @@ addState("2q2r-login", "2q2rAuth",
 
 
     });
+
+addState("u2f-login", "u2fAuth",
+    function () {
+        return {
+            key: data.keys[keyIndex]
+        }
+    }, function (sel) {
+        console.log("Key: ", data.keys[keyIndex].keyID);
+        u2f.sign(data.baseUrl, data.challenge, [{
+            version: "U2F_V2",
+            keyHandle: data.keys[keyIndex].keyID
+        }], function (reply) {
+            console.log("Login data: ", reply, data);
+            if (reply.errorCode) {
+                // login failed
+                alert("Login failed: " + reply.errorCode);
+                return;
+            }
+
+            // add more info to reply to get it ready to give to 2Q2R server
+            reply.appID = data.appId;
+            reply.challenge = data.challenge;
+            reply.deviceName = "YubiKey";
+            reply.type = "u2f";
+            /* $.postJSON(data.registerUrl, reply,
+                function (res) {
+                    if (res.successful)
+                        console.log("Succesful: ", res);
+                    else
+                        console.log("Error: ", res);
+                }).fail(function (jqXHR, textStatus) {
+                    console.log("Error: ", jqXHR.status);
+                });
+            */
+        });
+    }
+);
 
 $(document).ready(function () {
     init({

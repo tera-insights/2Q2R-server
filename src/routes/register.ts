@@ -69,7 +69,7 @@ export function register(req: express.Request, res: express.Response) {
     if (req.body.type == "u2f")
         cReq.appId = data.origin; // This is clearly a hack.
 
-    Keys.register(cReq.appId, cReq.userID, req.body.deviceName,
+    Keys.register(appID, cReq.userID, req.body.deviceName,
         req.body.type || "2q2r", req.body.fcmToken,
         cReq, <u2f.IRegisterData>req.body
     ).then(

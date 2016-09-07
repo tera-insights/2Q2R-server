@@ -193,6 +193,7 @@ export function iframe(req: express.Request, res: express.Response) {
                     challenge: cReq.challenge,
                     userID: cReq.userID,
                     appId: cReq.appId,
+                    baseUrl: info.baseURL,
                     infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
                     waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
                     challengeUrl: info.baseURL + "/v1/auth/" + id + "/challenge",
