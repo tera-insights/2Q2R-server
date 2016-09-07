@@ -4,7 +4,10 @@ addState("keyselect", "authKeyList",
     function () {
         console.log("Keys: ", data.keys);
         return {
-            keys: data.keys
+            keys: data.keys,
+            borowser: bowser.name,
+            browserVersion: bowser.version,
+            works: (bowser.check({chrome: "41"}) || bowser.check({}))
         }
     }, function (sel) {
         data.keys.forEach(function (key, i) {
