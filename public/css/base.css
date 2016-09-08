@@ -6,12 +6,33 @@ html {
     background-color: #FCFCFC;
 }
 
+
 /* We are in a window, need to center and set the size */
+
 .window {
+    /* same dimensions */
     height: 330px;
-    width: 630px;
+    width: 640px;
     transform: translate(-50%, 50%);
     margin-left: 50%;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+/* we do this because the border on the html element itself acts in a strange way */
+.window > body {
+    /* inherit the .window height/width */
+    height: inherit;
+    width: inherit;
+    border: 2px solid #4597DF;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+/* asterisk is not good most of the time, it is alright here */
+.window * {
+    /* to match the iframe */
+    font-size: 14px;
 }
 
 body {
@@ -27,7 +48,7 @@ ul li {
 }
 
 label {
-    color: rgba(0,0,0,0.87);
+    color: rgba(0, 0, 0, 0.87);
 }
 
 
@@ -72,6 +93,7 @@ label {
     display: flex;
 }
 
+
 /* the container for all of the first part of register */
 
 .key-list {
@@ -104,7 +126,7 @@ label {
 .key-list-divider {
     height: 100%;
     width: 1px;
-    background-color: rgba(0,0,0,0.12);
+    background-color: rgba(0, 0, 0, 0.12);
     margin: 0 1rem 0 1rem;
 }
 
