@@ -1,4 +1,5 @@
 var keyType = "2q2r"; //the keytype selected
+var hasU2FExt = false;
 
 addState("keytype", "registerKeyList", function () {
     return {
@@ -74,7 +75,8 @@ addState("2q2r-generate", "2q2rRegister",
 addState('u2f-generate', 'u2fRegister',
     function () {
         return {
-            windowUrl: window.location+"?k=u2f"
+            windowUrl: window.location+"?k=u2f",
+            ext: hasU2FExt
         }
     }, function (sel) {
         var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
@@ -120,5 +122,12 @@ $(document).ready(function () {
         // start with key type selection
         selectState("keytype");
     }
+
+    hasU2FExt = 
+        bowser.check({firefox: "41"}) && u2f.sign && !u2f.getApiVersion || 
+        bowser.check({chrome: "41"})
+        ;
+
+    console.log("Has ext: ", hasU2FExt);
 
 });
