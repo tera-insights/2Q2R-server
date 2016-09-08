@@ -74,7 +74,7 @@ addState("2q2r-generate", "2q2rRegister",
 addState('u2f-generate', 'u2fRegister',
     function () {
         return {
-            windowUrl: window.location
+            windowUrl: window.location+"?k=u2f"
         }
     }, function (sel) {
         var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
@@ -111,7 +111,14 @@ $(document).ready(function () {
         title: 'Device Registration'
     });
 
-    // start with key type selection
-    selectState("keytype");
+    var query = window.location.search.substr(1);
+    if (query === "k=u2f"){
+        selectState("u2f-generate");
+        $('html').addClass("window");
+    }
+    else {
+        // start with key type selection
+        selectState("keytype");
+    }
 
 });

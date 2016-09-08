@@ -9,12 +9,6 @@
     {#keys}
         <div class="key-list-info-key hidden" id="{$idx}-ki">
             {@select key=type}
-                {@any}
-                    <div class="ui radio checkbox" id="makedefault">
-                        <input type="radio" value="{$idx}" name="keyradio">
-                        <label>Set as default and login fast</label>
-                    </div>                  
-                {/any}
                 {@none}
                     <h1>This key type is not implemented </h1>
                 {/none}
@@ -24,7 +18,14 @@
                 {@eq value="u2f"}
                     <p> U2F Key </p>
                 {/eq}
+                {@any}
+                    <p>
+                        <input type="checkbox" id="{$idx}-def" value="{$idx}" name="keyradio">
+                        <label for="{$idx}-def">Set as default and login fast</label>
+                    </p>                  
+                {/any}
             {/select}
+
         </div>
     {/keys}
 </div>

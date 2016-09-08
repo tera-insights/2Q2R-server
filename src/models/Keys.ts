@@ -112,10 +112,17 @@ export class KeysSchema {
                     signatureData: signature.signatureData
                 }, key.pubKey);
                 if (res.successful) {
-                    if (!counter || res.counter === counter) {
+                    if (!counter || res.counter >= counter) {
+                        // if the message key is ahead, update the key in the database
+                        if (res.counter > counter) {
+                            key.updateAttributes({
+                                counter: res.counter
+                            });
+                        }
                         return "Authentication approved";
                     } else {
-                        throw Error("Counter in signature does not match.");
+                        throw Error("Counter in signature does not match. Sig: " +
+                            counter + " Msg" + res.counter);
                     }
                 } else {
                     throw Error("Digital signature check failed.");
