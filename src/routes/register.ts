@@ -50,6 +50,8 @@ export function register(req: express.Request, res: express.Response) {
         challenge = payload.challenge;
     }
 
+    console.log("Body: ", req.body);
+
     // make sure we have this challenge pending
     var cReq = <IRequest>pending.getByChallenge(challenge);
     if (!cReq) { // No valid challenge pending 

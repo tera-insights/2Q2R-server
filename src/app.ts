@@ -31,7 +31,11 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    verify: (req, res, buf: Buffer, encoding) => {
+        console.log(buf.toString(encoding));
+    }
+}));
 app.use(express.static('public'));
 
 // Pretty logs
