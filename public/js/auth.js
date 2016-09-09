@@ -7,7 +7,7 @@ addState("keyselect", "authKeyList",
             keys: data.keys,
             borowser: bowser.name,
             browserVersion: bowser.version,
-            works: (bowser.check({chrome: "41"}) || bowser.check({}))
+            works: (bowser.check({ chrome: "41" }) || bowser.check({}))
         }
     }, function (sel) {
         data.keys.forEach(function (key, i) {
@@ -94,7 +94,7 @@ addState("u2f-login", "u2fAuth",
                 sessionId: res.counter,
             }], function (reply) {
                 console.log("Login data: ", reply, data);
-                if(reply.errorCode == 2){
+                if (reply.errorCode == 2) {
                     $("#u2f-window", sel).show();
                     $("#u2f-msg").hide();
                     return;
@@ -108,7 +108,8 @@ addState("u2f-login", "u2fAuth",
                 reply.type = "u2f";
 
                 // add more info to reply to get it ready to give to 2Q2R server
-                $.postJSON(data.authUrl, reply,
+                $.postJSON(data.authUrl,
+                    { successful: true, data: reply },
                     function (res) {
                         if (res.successful)
                             console.log("Succesful: ", res);

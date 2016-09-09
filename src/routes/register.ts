@@ -37,23 +37,34 @@ export function info(req: express.Request, res: express.Response) {
  */
 export function register(req: express.Request, res: express.Response) {
     // console.log("Registration: ", req.body);
+
+    var payload = req.body.data;
+    var successful = req.body.successful;
+    var challenge = ""; 
     var data: any;
 
-    if (req.body.clientData[0] == "{") { // phone TODO: change phone
-        data = JSON.parse(req.body.clientData);
-        req.body.clientData = new Buffer(req.body.clientData).toString('base64');
+    if (successful){
+        data = JSON.parse(new Buffer(payload.clientData, 'base64').toString('utf8'));
+        challenge = data.challenge
     } else {
-        data = JSON.parse(new Buffer(req.body.clientData, 'base64').toString('utf8'));
-        console.log("U2F Data:", data, req.body.clientData);
+        challenge = payload.challenge;
     }
-    var appID = data.appID;
 
     // make sure we have this challenge pending
-    var cReq = <IRequest>pending.getByChallenge(data.challenge);
+    var cReq = <IRequest>pending.getByChallenge(challenge);
     if (!cReq) { // No valid challenge pending 
         res.status(403).send("Challenge does not exist");
         return;
     }
+
+    // Device not happy, send to everybody
+    if (!successful) {
+        pending.reject(cReq, payload.errorStatus, payload.errorMessage);
+        res.status(200).send("Registraton canceled");
+        return;
+    }
+
+    var appID = data.appID;
 
     //TODO: add appID in request
     appID = appID ? appID : cReq.appId;
@@ -64,14 +75,14 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
-    console.log("Start register:", data, cReq, req.body.deviceName);
+    console.log("Start register:", data, cReq, payload.deviceName);
 
-    if (req.body.type == "u2f")
+    if (payload.type == "u2f")
         cReq.appId = data.origin; // This is clearly a hack.
 
-    Keys.register(appID, cReq.userID, req.body.deviceName,
-        req.body.type || "2q2r", req.body.fcmToken,
-        cReq, <u2f.IRegisterData>req.body
+    Keys.register(appID, cReq.userID, payload.deviceName,
+        payload.type || "2q2r", payload.fcmToken,
+        cReq, <u2f.IRegisterData>payload
     ).then(
         (msg: string) => {
             console.log("Register resolving:", msg);

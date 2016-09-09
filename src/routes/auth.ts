@@ -29,34 +29,29 @@ var fbServerKey = config.get("fbServerKey");
 
 // POST: /auth
 export function authtenticate(req: express.Request, res: express.Response) {
-    if (req.body.errorStatus) {
-        // we got an error. Resolve accordingly
-        var cReq = <IRequest>pending.getByChallenge(req.body.challenge);
-        if (cReq && req.body.errorMessage) {
-            pending.reject(cReq, req.body.errorStatus, req.body.errorMessage);
-            res.status(200).send("Authentication canceled");
-            return;
-        } else {
-            res.status(400).send("Incorrect message");
-        }
-    }
+    var payload = req.body.data;
+    var successful = req.body.successful;
+    var challenge = "";
+    var data: any;
 
-    var data: any = {};
-    if (req.body.clientData[0] == "{") { // phone TODO: change phone
-        data = JSON.parse(req.body.clientData);
-        req.body.clientData = new Buffer(req.body.clientData).toString('base64');
+    if (successful) {
+        data = JSON.parse(new Buffer(payload.clientData, 'base64').toString('utf8'));
+        challenge = data.challenge
     } else {
-        data = JSON.parse(new Buffer(req.body.clientData, 'base64').toString('utf8'));
-        console.log("U2F Data:", data, req.body.clientData);
+        challenge = payload.challenge;
     }
 
-    console.log("Sign data: ", data);
-
-    var cReq = <IRequest>pending.getByChallenge(data.challenge);
-
-    if (!cReq /*|| cReq.userID != clientData.userID 
-     || cReq.keyHandle != clientData.keyID*/) { // No valid challenge pending 
+    // make sure we have this challenge pending
+    var cReq = <IRequest>pending.getByChallenge(challenge);
+    if (!cReq) { // No valid challenge pending 
         res.status(403).send("Challenge does not exist");
+        return;
+    }
+
+    // Device not happy, send to everybody
+    if (!successful) {
+        pending.reject(cReq, payload.errorStatus, payload.errorMessage);
+        res.status(200).send("Authentication canceled");
         return;
     }
 
@@ -71,10 +66,10 @@ export function authtenticate(req: express.Request, res: express.Response) {
 
     console.log("Start login:", data, cReq);
 
-    if (cReq, req.body.type == "u2f")
+    if (cReq, payload.type == "u2f")
         cReq.appId = data.origin; // This is clearly a hack.
 
-    Keys.checkSignature(cReq, <u2f.ISignatureData>req.body, cReq.counter)
+    Keys.checkSignature(cReq, <u2f.ISignatureData>payload, cReq.counter)
         .then((msg: string) => {
             console.log("Authentication resolving:", msg);
             pending.resolve(cReq, msg);

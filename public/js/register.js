@@ -95,7 +95,8 @@ addState('u2f-generate', 'u2fRegister',
             reply.challenge = data.challenge;
             reply.deviceName = "YubiKey";
             reply.type = "u2f";
-            $.postJSON(data.registerUrl, reply,
+            $.postJSON(data.registerUrl, 
+                {successful: true, data: reply},
                 function (res) {
                     if (res.successful)
                         console.log("Succesful: ", res);
