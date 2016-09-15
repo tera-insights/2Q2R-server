@@ -15,7 +15,7 @@ import * as s2s from './routes/s2s';
 import * as keys from './routes/keys';
 import * as users from './routes/users';
 
-
+import { Apps } from './models';
 
 // Set up express and Socket.IO
 var app = express();
@@ -30,10 +30,25 @@ app.engine('handlebars', exphbs({
     }
 }));
 app.set('view engine', 'handlebars');
+/**
+ * This uses a special verifier to check the message authentication. 
+ */
 
 app.use(bodyParser.json({
     verify: (req, res, buf: Buffer, encoding) => {
-        console.log(buf.toString(encoding));
+        var str = buf.toString(encoding);
+
+        if (req.headers['authentication']) {
+            var authParts = req.headers['authentication'].split(':');
+            var appID = authParts[0];
+            var digest = authParts[1];
+            if (Apps.checkSignature(appID, digest, req['originalUrl'], str)) {
+                req['s2s'] = true;
+                req['appID'] = appID;
+            } else {
+                req['s2s-fail'] = "HMAC failed";
+            }
+        }
     }
 }));
 app.use(express.static('public'));
@@ -56,7 +71,7 @@ app.get('/register/:id', registerRoutes.iframe);
 app.get('/register/:id');
 
 // authentication routes
-app.post('/v1/auth/request', authRoutes.request); // TODO: finish
+app.post('/v1/auth/request', s2s.ensureServer, authRoutes.request); 
 app.get('/v1/auth/:id/wait', authRoutes.wait);
 app.post('/v1/auth/:id/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authtenticate);

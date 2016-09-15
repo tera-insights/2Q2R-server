@@ -1,6 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
 
 import * as config from 'config';
+import * as crypto from 'crypto';
 
 export interface AppInfo {
     name: string;
@@ -37,7 +38,7 @@ function findIPv4() {
         for (var i = 0; i < networks.length; i++) {
             var network = networks[i];
 
-            if(!network.address.startsWith("127") && network.family == "IPv4") {
+            if (!network.address.startsWith("127") && network.family == "IPv4") {
                 return network.address;
             }
         }
@@ -85,23 +86,43 @@ export class AppsSchema {
         }
     }
 
+    checkSignature(appID: string, digest: string, route: string, body: string) {
+        var app = this.apps[appID];
+
+        if (!app) return false; // no matching appID
+
+        switch (app.authType) {
+            case "token":
+                var hmac = crypto.createHmac('sha256', app.token);
+                hmac.update(route);
+                hmac.update(body);
+                var cDigest = hmac.digest('base64');
+                return (cDigest === digest);
+
+            default:
+                return false; // authentication not supported
+        }
+
+
+    }
+
     getInfo(appID: string): IAppInfo {
         var app = this.apps[appID];
         if (!app) return undefined;
         else
             return {
                 appName: app.name,
-                baseURL:  this.baseURL, 
+                baseURL: this.baseURL,
                 appID: appID,
                 serverPubKey: "missing",
                 serverKeyType: "P256"
-        }
+            }
     }
 
     constructor(apps: AppInfoMap) {
-        this.apps = apps; 
-        var baseURL = <string> config.get("baseURL");
-        var port = <string> config.get("port");
+        this.apps = apps;
+        var baseURL = <string>config.get("baseURL");
+        var port = <string>config.get("port");
         var IP = findIPv4();
         this.baseURL = baseURL
             .replace('%port', port)
