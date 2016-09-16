@@ -12,7 +12,7 @@ import {Keys} from '../models';
 */
 export function deleteUser(req: express.Request, res: express.Response) {
     var userID = req.params.userID;
-    var appID = req.params.appID;
+    var appID = req.body.appID;
 
     Keys.deleteUser(appID, userID).then(
         () => {
@@ -25,15 +25,13 @@ export function deleteUser(req: express.Request, res: express.Response) {
 
 // POST: /users/exists/:userID
 export function existsUser(req: express.Request, res: express.Response) {
-    var userID = <string>req.body.userID;
+    var userID = <string>req.params.userID;
     var appID = req.body.appID;
 
     Keys.userExists(appID, userID).then(
         (exists:boolean) => {
-            console.log("Exists:", exists);
             res.json({exists: exists});
         }, (error) => {
-            console.log("Error: ", error);
             res.status(401).send(error.message);
         }
     )

@@ -23,7 +23,7 @@ var fbServerKey = config.get("fbServerKey");
 
 // POST: /v1/key/request
 export function request(req: express.Request, res: express.Response) {
-    var userID = req.body.userID;
+    var userID = req.params.userID;
     var appID = req.body.appID;
 
     if (!userID || !appID) {
@@ -102,7 +102,7 @@ export function getKeys(req: express.Request, res: express.Response) {
 }
 
 export function deleteKey(req: express.Request, res: express.Response) {
-    var keyID = req.body.keyID;
+    var keyID = req.params.keyID;
     var appID = req.body.appID;
     Keys.delete(appID, keyID).then(
         () => {

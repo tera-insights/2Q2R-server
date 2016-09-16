@@ -100,7 +100,7 @@ export function register(req: express.Request, res: express.Response) {
 
 // POST: /register/request
 export function request(req: express.Request, res: express.Response) {
-    var userID = req.body.userID;
+    var userID = req.params.userID;
     var appID = req.body.appID;
 
     var info = Apps.getInfo(appID);

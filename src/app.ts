@@ -30,27 +30,40 @@ app.engine('handlebars', exphbs({
     }
 }));
 app.set('view engine', 'handlebars');
+
+
+// Auxiliary function to inject authentication info
+function setSecurityHeaders(req, body?) {
+    if (req.headers['authentication']) {
+        var authParts = req.headers['authentication'].split(':');
+        var appID = authParts[0];
+        var digest = authParts[1];
+        if (Apps.checkSignature(appID, digest, req['originalUrl'], body)) {
+            req['s2s'] = true;
+            req['appID'] = appID;
+        } else {
+            req['s2s-fail'] = "HMAC failed";
+        }
+    }
+}
 /**
  * This uses a special verifier to check the message authentication. 
  */
-
 app.use(bodyParser.json({
     verify: (req, res, buf: Buffer, encoding) => {
         var str = buf.toString(encoding);
-
-        if (req.headers['authentication']) {
-            var authParts = req.headers['authentication'].split(':');
-            var appID = authParts[0];
-            var digest = authParts[1];
-            if (Apps.checkSignature(appID, digest, req['originalUrl'], str)) {
-                req['s2s'] = true;
-                req['appID'] = appID;
-            } else {
-                req['s2s-fail'] = "HMAC failed";
-            }
-        }
+        setSecurityHeaders(req, str);
     }
 }));
+/**
+ * Complementary middleware to take care of GET/DELETE
+ */
+app.use((req, res, next) => {
+    if (!req['s2s'] && !req['s2s-fail'])
+        setSecurityHeaders(req);
+    next();
+})
+
 app.use(express.static('public'));
 
 // Pretty logs
@@ -60,9 +73,8 @@ app.get('/v1/info/:appID', registerRoutes.info);
 app.get('/v1/info', registerRoutes.info);
 app.get('/v1/icon/:appID');// TODO: finish
 
-
 // registration routes
-app.post('/v1/register/request', s2s.ensureServer, registerRoutes.request);
+app.get('/v1/register/request/:userID', s2s.ensureServer, registerRoutes.request);
 app.get('/v1/register/:id/wait', registerRoutes.wait);
 app.post('/v1/register', registerRoutes.register);
 app.get('/register/:id', registerRoutes.iframe);
@@ -71,22 +83,22 @@ app.get('/register/:id', registerRoutes.iframe);
 app.get('/register/:id');
 
 // authentication routes
-app.post('/v1/auth/request', s2s.ensureServer, authRoutes.request); 
+app.get('/v1/auth/request/:userID', s2s.ensureServer, authRoutes.request);
 app.get('/v1/auth/:id/wait', authRoutes.wait);
 app.post('/v1/auth/:id/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authtenticate);
 app.get('/auth/:id', authRoutes.iframe);
 
 // key routes
-app.post('/v1/key/request', s2s.ensureServer, keys.request);
+app.get('/v1/key/request/:userID', s2s.ensureServer, keys.request);
 app.get('/v1/key/:id/wait', keys.wait);
-app.post('/v1/key/:id/remove', keys.deleteKey);
+app.delete('/v1/key/:id/:keyID', keys.deleteKey);
+app.post('/v1/key/delete/:keyID/device', keys.deleteDevKey);
 app.get('/keys/delete/:id', keys.iframe);
-app.post('/v1/keys/delete/:keyID/device', keys.deleteDevKey);
 
 // user routes
-app.post('/v1/users/exists', s2s.ensureServer, users.existsUser);
-app.post('/v1/users/delete/:userID', s2s.ensureServer, users.deleteUser);
+app.get('/v1/users/:userID', s2s.ensureServer, users.existsUser);
+app.delete('/v1/users/:userID', s2s.ensureServer, users.deleteUser);
 
 // Listen on desired port
 var port = config.get("port");

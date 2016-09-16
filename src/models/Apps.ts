@@ -86,7 +86,7 @@ export class AppsSchema {
         }
     }
 
-    checkSignature(appID: string, digest: string, route: string, body: string) {
+    checkSignature(appID: string, digest: string, route: string, body?: string) {
         var app = this.apps[appID];
 
         if (!app) return false; // no matching appID
@@ -95,7 +95,8 @@ export class AppsSchema {
             case "token":
                 var hmac = crypto.createHmac('sha256', app.token);
                 hmac.update(route);
-                hmac.update(body);
+                if (body)
+                    hmac.update(body);
                 var cDigest = hmac.digest('base64');
                 return (cDigest === digest);
 

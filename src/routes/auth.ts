@@ -146,7 +146,7 @@ export function challenge(req: express.Request, res: express.Response) {
 
 // POST: /auth/request
 export function request(req: express.Request, res: express.Response) {
-    var userID = req.body.userID;
+    var userID = req.params.userID;
     var appID = req.body.appID;
 
     if (!userID || !appID) {
