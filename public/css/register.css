@@ -5,7 +5,21 @@
     width: 100%;
 }
 
+.badge-container {
+    margin: 0 auto;
+    justify-content: center;
+    display: flex !important;
+}
+
+.badge-container a:nth-child(1) {
+    margin-right: 20px;
+}
+
 /* the app store logos */
 .badge {
-	height: 55px;
+	height: 45px;
+}
+
+.modal .modal-content {
+    padding: 7px 24px 7px 24px;
 }

@@ -19,6 +19,14 @@ addState("keytype", "registerKeyList", function () {
             selectState(keyType + "-generate");
         }
     )
+
+    $("#trigger-passwd").click(
+        function (event) { $('#modal-passwd').openModal(); });
+
+    $("#trigger-priv").click(
+        function (event) { $('#modal-priv').openModal(); });
+
+
 });
 
 addState("2q2r-generate", "2q2rRegister",
@@ -27,15 +35,10 @@ addState("2q2r-generate", "2q2rRegister",
     },
     function (sel) {
         $("#trigger-challenge").click(
-            function (event) {
-                $('#modal-challenge').openModal();
-            }
-        )
+            function (event) { $('#modal-challenge').openModal(); });
+
         $("#trigger-notify").click(
-            function (event) {
-                $('#modal-notify').openModal();
-            }
-        )
+            function (event) { $('#modal-notify').openModal(); })
 
         $("#continue", sel).click(
             function (event) {
@@ -75,7 +78,7 @@ addState("2q2r-generate", "2q2rRegister",
 addState('u2f-generate', 'u2fRegister',
     function () {
         return {
-            windowUrl: window.location+"?k=u2f",
+            windowUrl: window.location + "?k=u2f",
             ext: hasU2FExt
         }
     }, function (sel) {
@@ -95,8 +98,8 @@ addState('u2f-generate', 'u2fRegister',
             reply.challenge = data.challenge;
             reply.deviceName = "YubiKey";
             reply.type = "u2f";
-            $.postJSON(data.registerUrl, 
-                {successful: true, data: reply},
+            $.postJSON(data.registerUrl,
+                { successful: true, data: reply },
                 function (res) {
                     if (res.successful)
                         console.log("Succesful: ", res);
@@ -115,7 +118,7 @@ $(document).ready(function () {
     });
 
     var query = window.location.search.substr(1);
-    if (query === "k=u2f"){
+    if (query === "k=u2f") {
         selectState("u2f-generate");
         $('html').addClass("window");
     }
@@ -124,9 +127,9 @@ $(document).ready(function () {
         selectState("keytype");
     }
 
-    hasU2FExt = 
-        bowser.check({firefox: "41"}) && u2f.sign && !u2f.getApiVersion || 
-        bowser.check({chrome: "41"})
+    hasU2FExt =
+        bowser.check({ firefox: "41" }) && u2f.sign && !u2f.getApiVersion ||
+        bowser.check({ chrome: "41" })
         ;
 
     console.log("Has ext: ", hasU2FExt);
