@@ -77,10 +77,7 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
-    console.log("Start register:", data, cReq, payload.deviceName);
-
-    if (payload.type == "u2f")
-        cReq.appId = data.origin; // This is clearly a hack.
+    cReq.appId = cReq.appUrl; 
 
     Keys.register(appID, cReq.userID, payload.deviceName,
         payload.type || "2q2r", payload.fcmToken,
@@ -108,6 +105,7 @@ export function request(req: express.Request, res: express.Response) {
     Keys.generateRequest(appID, null, true)
         .then((req: IRequest) => {
             req.userID = userID;
+            req.appUrl = info.appURL;
             console.log("Request:", req);
             var id = pending.add(req);
             res.json({
@@ -155,7 +153,7 @@ export function iframe(req: express.Request, res: express.Response) {
             challenge: cReq.challenge,
             userID: cReq.userID,
             appId: cReq.appId,
-            baseUrl: info.baseURL,
+            appUrl: info.appURL,
             infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
             registerUrl: info.baseURL + "/v1/register",
             waitUrl: info.baseURL + "/v1/register/" + id + "/wait"

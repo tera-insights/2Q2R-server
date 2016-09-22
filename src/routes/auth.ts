@@ -64,10 +64,7 @@ export function authtenticate(req: express.Request, res: express.Response) {
         return;
     }
 
-    console.log("Start login:", data, cReq);
-
-    if (cReq, payload.type == "u2f")
-        cReq.appId = data.origin; // This is clearly a hack.
+    cReq.appId = cReq.appUrl; // This is clearly a hack.
 
     Keys.checkSignature(cReq, <u2f.ISignatureData>payload, cReq.counter)
         .then((msg: string) => {
@@ -109,8 +106,8 @@ export function challenge(req: express.Request, res: express.Response) {
         .then((req: IRequest) => {
             req.userID = cReq.userID;
             req.appID = cReq.appID;
+            req.appUrl = cReq.appUrl;
 
-            console.log("Request:", req);
             pending.replace(id, req);
 
             // send a Firebase request if we can
@@ -157,7 +154,9 @@ export function request(req: express.Request, res: express.Response) {
 
     var rep: IRequest = {
         userID: userID,
-        appID: appID
+        appID: appID,
+        appUrl: info.appURL
+
     };
 
     var id = pending.add(rep);
@@ -194,7 +193,7 @@ export function iframe(req: express.Request, res: express.Response) {
                     challenge: cReq.challenge,
                     userID: cReq.userID,
                     appId: cReq.appId,
-                    baseUrl: info.baseURL,
+                    appUrl: info.appURL,
                     authUrl: info.baseURL + "/v1/auth",
                     infoUrl: info.baseURL + "/v1/info/" + cReq.appId,
                     waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",

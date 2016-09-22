@@ -15,7 +15,8 @@ export type AppInfoMap = { [appID: string]: AppInfo };
 
 export interface IAppInfo {
     appName: string;
-    baseURL: string;
+    appURL: string;
+    baseURL: string; 
     appID: string;
     serverPubKey: string;
     serverKeyType: string;
@@ -114,6 +115,7 @@ export class AppsSchema {
             return {
                 appName: app.name,
                 baseURL: this.baseURL,
+                appURL: this.baseURL,
                 appID: appID,
                 serverPubKey: "missing",
                 serverKeyType: "P256"

@@ -10,6 +10,7 @@ var deleteDelay = 5000; // delay in ms to delete requests once answer is obtaine
 export interface IRequest {
     challenge?: string;
     id?: string; 
+    appUrl?: string;
     promise?: Promise<any>; // promise that allows the answer to be picked up
     resolve?: Function; // function to announce correct answer
     reject?: Function; // Function to announce failure 
