@@ -1,15 +1,41 @@
 {! Template to display registration for U2F devices !}
+<div class="register">
+{?ext}
+    {?needsWindow}
+    <div>
+        <p> It seems that security restrictions prevent the iframe to communicate 
+            with the FIDO U2F device. Please click the button below to open this
+            dialog in a new window. </p>
 
-<div id="u2f-msg">
-    <p> Insert the U2F device  and the press the button.</p>
-</div>
-<div id="u2f-window" class="hidden">
-    <p> It seems that security restrictions prevent the iframe to communicate 
-        with the FIDO U2F device. Please click the button below to open this
-        dialog in a new window. </p>
+        <a class="waves-effect waves-light btn" onclick="window.open('{windowUrl}')">Open in new window</a>
+    </div>
+    {:else}
+    <div class="u2f-imgs">
+        <div class="u2f-img">
+            <img src="/img/insert-200.jpg">
+            <p>Insert the U2F device </p>
+        </div>
+        <div class="u2f-img">
+            <img src="/img/press-200.jpg">
+            <p>Press the button (if any)</p>
+        </div>
+    </div>
+    {/needsWindow}
+{:else}
+    <div>
+        <p> Your browser does not support FIDO U2F deces. Please open {windowUrl} <br> into a supported browser </p>
 
-    <p> Make sure you grant permission to </p>
-
-     <a class="waves-effect waves-light btn" onclick="window.open('{windowUrl}')">Open in new window</a>
-        
+        <p> List of supported browsers: </p>
+        <ul>
+            <li> Chrome 41+ and https:/ domain </li>
+            <li> Firefox 38+ with  <a target="_blank" href="https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/">U2F add-on</a></li>
+        </ul> 
+        {?isWindow}
+        <p> Please close this window when you are done </p>
+        {/isWindow}
+    </div>
+{/ext}
+    <a class="back-btn" onclick="selectState('keytype')">
+        <img src="/img/undo2.svg">
+    </a>
 </div>

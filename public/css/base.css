@@ -190,3 +190,25 @@ label {
 .info {
     width: 60%;
 }
+
+.back-btn {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+}
+
+/* images shown to instruct U2F users */
+.u2f-imgs {
+    display: flex;
+    justify-content: center;
+}
+
+.u2f-img {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.u2f-img img {
+    margin: 0 20px;
+}

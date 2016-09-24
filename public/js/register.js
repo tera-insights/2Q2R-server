@@ -1,5 +1,7 @@
 var keyType = "2q2r"; //the keytype selected
 var hasU2FExt = false;
+var needsWindow = false;
+var isWindow = false;
 
 addState("keytype", "registerKeyList", function () {
     return {
@@ -79,7 +81,9 @@ addState('u2f-generate', 'u2fRegister',
     function () {
         return {
             windowUrl: window.location + "?k=u2f",
-            ext: hasU2FExt
+            ext: hasU2FExt,
+            needsWindow: needsWindow,
+            isWindow: isWindow
         }
     }, function (sel) {
         var registerRequests = [{ version: "U2F_V2", challenge: data.challenge }];
@@ -117,8 +121,16 @@ $(document).ready(function () {
         title: 'Device Registration'
     });
 
+    hasU2FExt =
+        bowser.check({ firefox: "38" }, true) && u2f.sign && !u2f.getApiVersion ||
+        bowser.check({ chrome: "41" }, true) && window.location.protocol === "https:"
+        ;
+
+    needsWindow = hasU2FExt && bowser.check({ chrome: "41"}, true);
+
     var query = window.location.search.substr(1);
     if (query === "k=u2f") {
+        isWindow = true;
         selectState("u2f-generate");
         $('html').addClass("window");
     }
@@ -126,12 +138,5 @@ $(document).ready(function () {
         // start with key type selection
         selectState("keytype");
     }
-
-    hasU2FExt =
-        bowser.check({ firefox: "41" }) && u2f.sign && !u2f.getApiVersion ||
-        bowser.check({ chrome: "41" })
-        ;
-
-    console.log("Has ext: ", hasU2FExt);
 
 });
