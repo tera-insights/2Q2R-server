@@ -187,14 +187,19 @@ label {
 
 /* info section */
 
-.info {
+.qr-info {
     width: 60%;
+    margin-left: 1rem;
 }
 
 .back-btn {
+    color: #039be5;
+    font-size: 17px;
+}
+
+.register-back {
     position: absolute;
-    bottom: 8px;
-    left: 8px;
+    bottom: 0;
 }
 
 /* images shown to instruct U2F users */

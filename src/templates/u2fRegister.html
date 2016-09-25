@@ -23,11 +23,11 @@
     {/needsWindow}
 {:else}
     <div>
-        <p> Your browser does not support FIDO U2F deces. Please open {windowUrl} <br> into a supported browser </p>
+        <p> Your browser does not support FIDO U2F devices. Please open <a href="{windowUrl}">{windowUrl}</a> <br> in a supported browser </p>
 
         <p> List of supported browsers: </p>
         <ul>
-            <li> Chrome 41+ and https:/ domain </li>
+            <li> Chrome 41+ and https:// domain </li>
             <li> Firefox 38+ with  <a target="_blank" href="https://addons.mozilla.org/en-US/firefox/addon/u2f-support-add-on/">U2F add-on</a></li>
         </ul> 
         {?isWindow}
@@ -35,7 +35,8 @@
         {/isWindow}
     </div>
 {/ext}
-    <a class="back-btn" onclick="selectState('keytype')">
-        <img src="/img/undo2.svg">
+    <div class="flex-fill"></div>
+    <a class="back-btn register-back" href="#" onclick="selectState('keytype')">
+        &#8617; Back
     </a>
 </div>
