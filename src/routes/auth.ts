@@ -28,7 +28,7 @@ var pending = new util.PendingRequests();
 var fbServerKey = config.get("fbServerKey");
 
 // POST: /auth
-export function authtenticate(req: express.Request, res: express.Response) {
+export function authenticate(req: express.Request, res: express.Response) {
     var payload = req.body.data;
     var successful = req.body.successful;
     var challenge = "";

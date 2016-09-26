@@ -42,7 +42,7 @@ export function request(req: express.Request, res: express.Response) {
     res.json({
         id: id,
         deleteUrl: info.baseURL + "/keys/delete/" + id,
-        waitUrl: info.baseURL + "/v1/keys/" + id + "/wait",
+        waitUrl: info.baseURL + "/v1/key/" + id + "/wait",
     });
 }
 
@@ -80,7 +80,7 @@ export function iframe(req: express.Request, res: express.Response) {
                     keys: keys,
                     userID: cReq.userID,
                     appId: cReq.appID,
-                    waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
+                    waitUrl: info.baseURL + "/v1/key/" + id + "/wait",
                     deleteUrl: info.baseURL + "/v1/key/" +id + "/remove"
                 }
             });
