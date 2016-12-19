@@ -7,16 +7,16 @@ var shell = require('gulp-shell');
 var dust = require('gulp-dust');
 
 var tsProject = ts.createProject({
-    module: "commonjs",
-    target: "es5",
-    preserveConstEnums: true,
-    sourceMap: true
+    "module": "commonjs",
+    "target": "es6",
+    "preserveConstEnums": true,
+    "sourceMap": true
 });
 
 gulp.task('typescript', [/*'prettify'*/], function () {
     var result = gulp.src('src/**/*.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts(tsProject));
+        .pipe(tsProject());
 
     return result.js
         .pipe(sourcemaps.write())
