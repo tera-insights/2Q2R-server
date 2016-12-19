@@ -17,6 +17,10 @@
   "bugs": {
     "url": "https://github.com/alinVD/2Q2R-demo/issues"
   },
+  "engines": {
+      "node": "6.9.2",
+      "npm": "3.10.9"
+  },
   "homepage": "https://github.com/alinVD/2Q2R-demo#readme",
   "devDependencies": {
     "faker": "^3.0.1",
