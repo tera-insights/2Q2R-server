@@ -17,6 +17,7 @@ import * as util from '../util';
 interface IRequest extends u2f.IRequest, util.IRequest {
     userID: string,
     appID: string,
+    nonce: string,
     counter?: number,
     fcmToken?: string,
 }
@@ -80,7 +81,7 @@ export function authenticate(req: express.Request, res: express.Response) {
 
 // GET: /auth/:id/wait
 export function wait(req: express.Request, res: express.Response) {
-    var id = req.params.id;
+    var id = req.body.requestID;
     pending.waitByID(id)
         .then(() => {
             res.status(200).send("OK");
@@ -92,7 +93,7 @@ export function wait(req: express.Request, res: express.Response) {
 // POST: /v1/auth/:id/select
 export function challenge(req: express.Request, res: express.Response) {
     var keyID = req.body.keyID;
-    var id = req.params.id;
+    var id = req.body.requestID;
 
     // look up the request
     var cReq = <IRequest>pending.getByID(id);
@@ -145,6 +146,7 @@ export function challenge(req: express.Request, res: express.Response) {
 export function request(req: express.Request, res: express.Response) {
     var userID = req.params.userID;
     var appID = req.body.appID;
+    var nonce = req.params.nonce;
 
     if (!userID || !appID) {
         res.status(400).send("Missing parameters.");
@@ -155,8 +157,8 @@ export function request(req: express.Request, res: express.Response) {
     var rep: IRequest = {
         userID: userID,
         appID: appID,
-        appUrl: info.appURL
-
+        appUrl: info.appURL,
+        nonce: nonce
     };
 
     var id = pending.add(rep);

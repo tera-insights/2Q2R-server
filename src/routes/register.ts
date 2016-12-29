@@ -5,7 +5,7 @@
 import * as express from 'express';
 import * as Promise from "bluebird";
 
-import {Keys, Apps} from '../models';
+import { Keys, Apps } from '../models';
 import * as config from 'config';
 import * as u2f from "u2f";
 
@@ -40,10 +40,15 @@ export function register(req: express.Request, res: express.Response) {
 
     var payload = req.body.data;
     var successful = req.body.successful;
-    var challenge = ""; 
+    var challenge = "";
     var data: any;
 
-    if (successful){
+    if (!payload || !payload.clientData){
+        res.status(400).send("Difformed data");
+        return;
+    }
+
+    if (successful) {
         data = JSON.parse(new Buffer(payload.clientData, 'base64').toString('utf8'));
         challenge = data.challenge
     } else {
@@ -77,7 +82,7 @@ export function register(req: express.Request, res: express.Response) {
         return;
     }
 
-    cReq.appId = cReq.appUrl; 
+    cReq.appId = cReq.appUrl;
 
     Keys.register(appID, cReq.userID, payload.deviceName,
         payload.type || "2q2r", payload.fcmToken,
@@ -116,9 +121,21 @@ export function request(req: express.Request, res: express.Response) {
         });
 }
 
-// GET: /register/:id/wait
+export function challenge(req: express.Request, res: express.Response) {
+    var id = req.body.requestID;
+    var info = pending.getByID(id);
+    if (info && info.challenge) {
+        res.json({
+            challenge: info.challenge
+        });
+    } else {
+        res.status(400).send("Challenge not found for "+id);
+    }
+}
+
+// POST: /register/wait
 export function wait(req: express.Request, res: express.Response) {
-    var id = req.params.id;
+    var id = req.body.requestID;
     pending.waitByID(id)
         .then(() => {
             res.status(200).send("OK");

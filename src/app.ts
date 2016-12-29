@@ -34,17 +34,19 @@ app.set('view engine', 'handlebars');
 
 // Auxiliary function to inject authentication info
 function setSecurityHeaders(req, body?) {
-    if (req.headers['authentication']) {
-        var authParts = req.headers['authentication'].split(':');
+    if (req.headers['x-authentication']) {
+        var authParts = req.headers['x-authentication'].split(':');
         var appID = authParts[0];
         var digest = authParts[1];
+
         if (Apps.checkSignature(appID, digest, req['originalUrl'], body)) {
             req['s2s'] = true;
             req['appID'] = appID;
         } else {
             req['s2s-fail'] = "HMAC failed";
+            console.log("Hmac failed. ", req.headers['X-Authentication']);
         }
-    }
+    } 
 }
 /**
  * This uses a special verifier to check the message authentication. 
@@ -75,7 +77,8 @@ app.get('/v1/icon/:appID');// TODO: finish
 
 // registration routes
 app.get('/v1/register/request/:userID', s2s.ensureServer, registerRoutes.request);
-app.get('/v1/register/:id/wait', registerRoutes.wait);
+app.post('/v1/register/wait', registerRoutes.wait);
+app.post('/v1/register/challenge', registerRoutes.challenge);
 app.post('/v1/register', registerRoutes.register);
 app.get('/register/:id', registerRoutes.iframe);
 
@@ -83,9 +86,9 @@ app.get('/register/:id', registerRoutes.iframe);
 app.get('/register/:id');
 
 // authentication routes
-app.get('/v1/auth/request/:userID', s2s.ensureServer, authRoutes.request);
-app.get('/v1/auth/:id/wait', authRoutes.wait);
-app.post('/v1/auth/:id/challenge', authRoutes.challenge);
+app.get('/v1/auth/request/:userID/:nonce', s2s.ensureServer, authRoutes.request);
+app.post('/v1/auth/wait', authRoutes.wait);
+app.post('/v1/auth/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authenticate);
 app.get('/auth/:id', authRoutes.iframe);
 

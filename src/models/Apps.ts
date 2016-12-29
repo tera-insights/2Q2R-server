@@ -2,6 +2,7 @@
 
 import * as config from 'config';
 import * as crypto from 'crypto';
+import * as URLSafeBase64 from "urlsafe-base64";
 
 export interface AppInfo {
     name: string;
@@ -98,14 +99,14 @@ export class AppsSchema {
                 hmac.update(route);
                 if (body)
                     hmac.update(body);
-                var cDigest = hmac.digest('base64');
+                var cDigest = URLSafeBase64.encode(hmac.digest('base64'));
+                if (cDigest !== digest)
+                    console.error("Authentication failed: ", cDigest, digest);
                 return (cDigest === digest);
 
             default:
                 return false; // authentication not supported
         }
-
-
     }
 
     getInfo(appID: string): IAppInfo {
