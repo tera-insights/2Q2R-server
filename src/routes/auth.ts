@@ -69,11 +69,9 @@ export function authenticate(req: express.Request, res: express.Response) {
 
     Keys.checkSignature(cReq, <u2f.ISignatureData>payload, cReq.counter)
         .then((msg: string) => {
-            console.log("Authentication resolving:", msg);
             pending.resolve(cReq, msg);
             res.status(200).send("OK");
         }, (err: Error) => {
-            console.log("Error:", err);
             pending.reject(cReq, 400, err.message);
             res.status(400).send("Authentication failed");
         });
@@ -113,7 +111,6 @@ export function challenge(req: express.Request, res: express.Response) {
 
             // send a Firebase request if we can
             if (req.fcmToken) {
-                console.log("Sending Firebase request");
                 unirest.post("https://fcm.googleapis.com/fcm/send")
                     .headers({
                         "Authorization": "key=" + fbServerKey,
@@ -127,7 +124,7 @@ export function challenge(req: express.Request, res: express.Response) {
                         }
                     })
                     .end(function (response) {
-                        console.log("Firebase request: ", response.statusCode, response.body);
+                        //console.log("Firebase request: ", response.statusCode, response.body);
                     });
             }
 
@@ -183,7 +180,6 @@ export function iframe(req: express.Request, res: express.Response) {
 
     Keys.get(cReq.appID, cReq.userID)
         .then((keys) => {
-            console.log("Keys of ", cReq.appID, cReq.userID, keys);
             res.render('all', {
                 layout: false,
                 name: "Authentication",

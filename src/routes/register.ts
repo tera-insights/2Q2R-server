@@ -36,8 +36,6 @@ export function info(req: express.Request, res: express.Response) {
  * Device registration route. 
  */
 export function register(req: express.Request, res: express.Response) {
-    // console.log("Registration: ", req.body);
-
     var payload = req.body.data;
     var successful = req.body.successful;
     var challenge = "";
@@ -54,8 +52,6 @@ export function register(req: express.Request, res: express.Response) {
     } else {
         challenge = payload.challenge;
     }
-
-    console.log("Body: ", req.body);
 
     // make sure we have this challenge pending
     var cReq = <IRequest>pending.getByChallenge(challenge);
@@ -89,11 +85,9 @@ export function register(req: express.Request, res: express.Response) {
         cReq, <u2f.IRegisterData>payload
     ).then(
         (msg: string) => {
-            console.log("Register resolving:", msg);
             pending.resolve(cReq, msg);
             res.status(200).send("OK");
         }, (err: Error) => {
-            console.log("Error:", err);
             pending.reject(cReq, 400, err.message);
             res.status(400).send("Registration failed");
         });
@@ -111,7 +105,6 @@ export function request(req: express.Request, res: express.Response) {
         .then((req: IRequest) => {
             req.userID = userID;
             req.appUrl = info.appURL;
-            console.log("Request:", req);
             var id = pending.add(req);
             res.json({
                 id: id,

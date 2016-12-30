@@ -44,7 +44,6 @@ function setSecurityHeaders(req, body?) {
             req['appID'] = appID;
         } else {
             req['s2s-fail'] = "HMAC failed";
-            console.log("Hmac failed. ", req.headers['X-Authentication']);
         }
     } 
 }

@@ -34,7 +34,6 @@ export class KeysSchema {
                 // just generate the request
                 resolve(u2f.request(appID, keyID));
             } else {
-                console.log("Request: ", appID, keyID);
                 resolve(this.schema.findByPrimary(keyID).then(
                     (key: IKeys.IKeyInstance) => {
                         if (!key)
@@ -77,7 +76,6 @@ export class KeysSchema {
                 clientData: registerData.clientData,
                 registrationData: registerData.registrationData
             });
-            console.log("Register: ", res, name);
             if (res.successful) {
                 resolve(this.schema.create({
                     keyID: res.keyHandle,
@@ -110,7 +108,7 @@ export class KeysSchema {
                 var res = u2f.checkSignature(request, {
                     clientData: signature.clientData,
                     signatureData: signature.signatureData
-                }, key.pubKey);
+                }, key.pubKey); 
                 if (res.successful) {
                     if (!counter || res.counter >= counter) {
                         // if the message key is ahead, update the key in the database
