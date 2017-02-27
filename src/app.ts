@@ -76,6 +76,7 @@ app.get('/v1/icon/:appID');// TODO: finish
 
 // registration routes
 app.get('/v1/register/request/:userID', s2s.ensureServer, registerRoutes.request);
+app.get('/v1/register/:id/wait', registerRoutes.wait);
 app.post('/v1/register/wait', registerRoutes.wait);
 app.post('/v1/register/challenge', registerRoutes.challenge);
 app.post('/v1/register', registerRoutes.register);
@@ -86,6 +87,7 @@ app.get('/register/:id');
 
 // authentication routes
 app.get('/v1/auth/request/:userID/:nonce', s2s.ensureServer, authRoutes.request);
+app.get('/v1/auth/:id/wait', authRoutes.wait);
 app.post('/v1/auth/wait', authRoutes.wait);
 app.post('/v1/auth/challenge', authRoutes.challenge);
 app.post('/v1/auth/', authRoutes.authenticate);

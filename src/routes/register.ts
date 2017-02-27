@@ -128,7 +128,7 @@ export function challenge(req: express.Request, res: express.Response) {
 
 // POST: /register/wait
 export function wait(req: express.Request, res: express.Response) {
-    var id = req.body.requestID;
+    let id = req.body.requestID || req.params.id;
     pending.waitByID(id)
         .then(() => {
             res.status(200).send("OK");
