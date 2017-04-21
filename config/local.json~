@@ -1,0 +1,20 @@
+{
+    "apps": { // map appID => info
+        "ET-wi0wzr7GCi4vsfsXsUuKOfmiWLiHBVbmJJPidvhA": {
+            "name": "2Q2R Home2 ",
+            "authType": "token",
+            "token": "748312907487203129347q97"
+        }
+    },
+    "fbServerKey": "AIzaSyBgkaqI_RSrrkf2ajdx9kjQKf0QWlgEWD4",
+    "database": {
+        "db": "2Q2R-server",
+        "username": null,
+        "password": null,
+        "options": {
+            "logging": false,
+            "dialect": "sqlite",
+            "storage": ":memory:"
+        }
+    }
+}

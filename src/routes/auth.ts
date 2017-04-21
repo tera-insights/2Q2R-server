@@ -69,7 +69,7 @@ export function authenticate(req: express.Request, res: express.Response) {
 
     Keys.checkSignature(cReq, <u2f.ISignatureData>payload, cReq.counter)
         .then((msg: string) => {
-            pending.resolve(cReq, msg);
+            pending.resolve(cReq, {msg: msg, nonce: cReq.nonce});
             res.status(200).send("OK");
         }, (err: Error) => {
             pending.reject(cReq, 400, err.message);
@@ -77,11 +77,13 @@ export function authenticate(req: express.Request, res: express.Response) {
         });
 }
 
-// GET: /auth/:id/wait
+// GET /auth/:id/wait
+// POST /auth/wait (requestID: the request id)
 export function wait(req: express.Request, res: express.Response) {
-    var id = req.body.requestID;
+    var id = req.body.requestID || req.params.id;
+    console.log("ID:", id);
     pending.waitByID(id)
-        .then(() => {
+        .then((rep) => {
             res.status(200).send("OK");
         }, (error) => {
             res.status(400).send(error);
