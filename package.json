@@ -49,6 +49,8 @@
     "passport": "^0.3.2",
     "passport-challenge": "^0.1.1",
     "passport-local": "^1.0.0",
+    "pg": "^6.1.2",
+    "pg-hstore": "^2.3.2",
     "q": "^1.4.1",
     "sequelize": "^3.23.6",
     "serve-static": "^1.10.0",

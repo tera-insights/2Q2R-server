@@ -88,6 +88,7 @@ export function register(req: express.Request, res: express.Response) {
             pending.resolve(cReq, msg);
             res.status(200).send("OK");
         }, (err: Error) => {
+            console.error("Registration failed ", err);
             pending.reject(cReq, 400, err.message);
             res.status(400).send("Registration failed");
         });
