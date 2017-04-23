@@ -93,7 +93,7 @@ export function wait(req: express.Request, res: express.Response) {
 // POST: /v1/auth/:id/select
 export function challenge(req: express.Request, res: express.Response) {
     var keyID = req.body.keyID;
-    var id = req.body.requestID;
+    var id = req.body.requestID || req.params.id;
 
     // look up the request
     var cReq = <IRequest>pending.getByID(id);
