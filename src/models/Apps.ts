@@ -92,7 +92,6 @@ export class AppsSchema {
         var app = this.apps[appID];
 
         if (!app) return false; // no matching appID
-
         switch (app.authType) {
             case "token":
                 var hmac = crypto.createHmac('sha256', app.token);
@@ -100,6 +99,7 @@ export class AppsSchema {
                 if (body)
                     hmac.update(body);
                 var cDigest = URLSafeBase64.encode(hmac.digest('base64'));
+                digest = URLSafeBase64.encode(digest);
                 if (cDigest !== digest)
                     console.error("Authentication failed: ", cDigest, digest);
                 return (cDigest === digest);
