@@ -99,6 +99,7 @@ export function register(req: express.Request, res: express.Response) {
 export function request(req: express.Request, res: express.Response) {
     var userID = req.params.userID;
     var appID = req.body.appID;
+    var nonce = req.params.nonce;
 
     var info = Apps.getInfo(appID);
 
@@ -106,11 +107,13 @@ export function request(req: express.Request, res: express.Response) {
         .then((req: IRequest) => {
             req.userID = userID;
             req.appUrl = info.appURL;
+            req.nonce = nonce;
             var id = pending.add(req);
             res.json({
                 id: id,
                 registerUrl: info.baseURL + "/register/" + id,
                 waitUrl: info.baseURL + "/v1/register/" + id + "/wait",
+                nonce: pending.getByID(id).nonce
             });
         });
 }
@@ -148,8 +151,10 @@ export function iframe(req: express.Request, res: express.Response) {
     }
 
     var info = Apps.getInfo(cReq.appId);
+    console.log(cReq.appId)
 
     if (!cReq || !info) {
+        console.log("iframe 401")
         res.status(401).send("Unauthorized");
         return;
     }

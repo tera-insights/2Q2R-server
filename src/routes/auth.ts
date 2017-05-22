@@ -165,7 +165,8 @@ export function request(req: express.Request, res: express.Response) {
     res.json({
         id: id,
         authUrl: info.baseURL + "/auth/" + id,
-        waitUrl: info.baseURL + "/v1/auth/" + id + "/wait",
+        waitUrl: info.baseURL + "/v1/autzh/" + id + "/wait",
+        nonce: pending.getByID(id).nonce
     });
 }
 

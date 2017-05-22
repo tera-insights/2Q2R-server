@@ -9,6 +9,7 @@ var deleteDelay = 5000; // delay in ms to delete requests once answer is obtaine
 
 export interface IRequest {
     challenge?: string;
+    nonce?: string;
     id?: string; 
     appUrl?: string;
     promise?: Promise<any>; // promise that allows the answer to be picked up
@@ -17,7 +18,7 @@ export interface IRequest {
 }
 
 /**
- * Class that models pendign requests. It deals with correct 
+ * Class that models pending requests. It deals with correct 
  * dispatch of requests to all interested parties.
  * 
  * Requests must inherit from IAsyncRequest trait  
@@ -30,7 +31,7 @@ export class PendingRequests {
     private pendingByID: { [id: string]: IRequest } = {};
 
     /**
-     * Send results to all listners so they can finis their requests 
+     * Send results to all listeners so they can finish their requests 
      * 
      * @param {IRequest} request
      * @param {*} obj
@@ -107,7 +108,7 @@ export class PendingRequests {
             request.reject = reject;
         });
 
-        if (request.challenge)
+            if (request.challenge)
             this.pendingByChallenge[request.challenge] = request;
         this.pendingByID[id] = request;
 

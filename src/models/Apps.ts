@@ -99,7 +99,6 @@ export class AppsSchema {
                 if (body)
                     hmac.update(body);
                 var cDigest = URLSafeBase64.encode(hmac.digest('base64'));
-                digest = URLSafeBase64.encode(digest);
                 if (cDigest !== digest)
                     console.error("Authentication failed: ", cDigest, digest);
                 return (cDigest === digest);
@@ -110,6 +109,7 @@ export class AppsSchema {
     }
 
     getInfo(appID: string): IAppInfo {
+        console.log(this.apps)
         var app = this.apps[appID];
         if (!app) return undefined;
         else
